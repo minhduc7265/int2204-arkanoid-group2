@@ -1,0 +1,8 @@
+# Owner
+*       @minhduc7265
+
+# Branch x
+/featureA/**  @userA
+
+# Nhánh featureB chỉ @userB
+/featureB/**  @userB
