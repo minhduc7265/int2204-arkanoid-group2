@@ -1,17 +1,31 @@
 package com.game.arkanoid.model;
 
+/**
+* MovableObject: base class for movable objects (Ball, Paddle).
+* - Stores velocity (vx, vy), (optional) acceleration (ax, ay), speed limit.
+* - Updates position in delta time (seconds).
+* - Supports bounce (reversal direction) when colliding with edges or other objects.
+*/
 import java.util.*;
 
 public class MovableObject extends GameObject {
-    private float vx;
-    private float vy;
+    private float vx;   //Velocity of x
+    private float vy;   //Velocity of y
 
-    private final float maxSpeed = 400;
+    
+    private float ax = 0f;   // acceleration x (px/s^2)
+    private float ay = 0f;   // acceleration y (px/s^2)
+    private boolean useAcceleration = false;
+
+
+    private float maxSpeed = Float.POSITIVE_INFINITY;
 
     public MovableObject() {
         super();
         this.vx = 0f;
         this.vy = 0f;
+        this.ax = 0f;
+        this.ay = 0f;
     }
     // --- Velcocity ---
     public void setVelocity(float vx, float vy) {
@@ -25,8 +39,8 @@ public class MovableObject extends GameObject {
         setVelocity(this.vx + dvx, this.vy + dvy);
     }
 
-    public float getVX() { return this.vx; }
-    public float getVY() { return this.vy; }
+    public float getVelocityX() { return this.vx; }
+    public float getVelocityY() { return this.vy; }
 
     // --- Speed ---
     public float getSpeed()
@@ -63,11 +77,98 @@ public class MovableObject extends GameObject {
     }
 
     
+    // --- Acceleration ---
+    public void enableAcceleration(boolean enable) { this.useAcceleration = enable; }
+    public boolean isAccelerationEnabled() { return useAcceleration; }
+
+    public void setAcceleration(float ax, float ay) {
+        this.ax = ax;
+        this.ay = ay;
+    }
+
+    public void addAcceleration(float dax, float day) {
+        this.ax += dax;
+        this.ay += day;
+    }
+
+    public float getAccelerationX() { return ax; }
+    public float getAccelerationY() { return ay; }
+
+
+    // --- Max speed ---
+    public void setMaxSpeed(float maxSpeed) { this.maxSpeed = maxSpeed <= 0 ? 0 : maxSpeed; }
+    public float getMaxSpeed() { return maxSpeed; }
+
+    // --- update ---
+    
+    public void update(float dt) {
+        if (!getStatus()) return;
+        if (dt <= 0f) return;
+        if (useAcceleration) {
+            float nvx = vx + ax * dt;
+            float nvy = vy + ay * dt;
+            float[] clamped = clampToMaxSpeed(nvx, nvy);
+            vx = clamped[0];
+            vy = clamped[1];
+        } else {
+            float[] clamped = clampToMaxSpeed(vx, vy);
+            vx = clamped[0];
+            vy = clamped[1];
+        }
+        float newX = getXPos() + vx * dt;
+        float newY = getYPos() + vy * dt;
+        setPosition(newX, newY);
+    }
+
+
+    @Override
+    public void update() {
+        update(1/60f);
+    }
+
+    /*change direction along the x */
+    public void bounceX() {
+        this.vx = -this.vx;
+    }
+    /*change direction along the y */
+    public void bounceY() {
+        this.vy = -this.vy;
+    }
+
+    /**
+    * Limit the object inside the frame [minX, minY]..[maxX, maxY].
+    * - If isBouncy = true: when it crosses the border, it will be placed on the border and reverse direction accordingly.
+    * - If isBouncy = false: only clamp the position, do not reverse direction (suitable for Paddle).
+    */
+    public void clampWithin(float minX, float minY, float maxX, float maxY, boolean isBouncy) {
+        float x = getXPos();
+        float y = getYPos();
+        float w = getWidth();
+        float h = getHeight();
+
+        if(x < minX) {
+            setPosition(minX, y);
+            if(isBouncy) bounceX();
+        } else if(x + w > maxX) {
+            setPosition(maxX - w, y);
+            if(isBouncy) bounceX();
+        }
+
+        if(y < minY) {
+            setPosition(getXPos(), minY);
+            if(isBouncy) bounceY();
+        } else if(y + h > maxY) {
+            setPosition(getXPos(), maxY - h);
+            if(isBouncy) bounceY();
+        }
+    }
     // --- Private utilities ---
     private float[] clampToMaxSpeed(float vx, float vy) {
-        float speed = (float) Math.sqrt(vx*vx + vy*vy);
-        if(speed <= maxSpeed) return new float[]{vx , vy};
-        float scale = maxSpeed/speed;
-        return new float[]{vx*scale , vy*scale};
+        if (Float.isInfinite(maxSpeed)) return new float[]{vx, vy};
+        float speed = (float)Math.sqrt(vx * vx + vy * vy);
+        if (speed <= maxSpeed) return new float[]{vx, vy};
+        if (speed < 1e-6f) return new float[]{0f, 0f};
+        float scale = maxSpeed / speed;
+        return new float[]{vx * scale, vy * scale};
     }
 }
