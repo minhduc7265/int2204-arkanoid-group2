@@ -13,8 +13,8 @@ public class MovableObject extends GameObject {
     private float vy;   //Velocity of y
 
     
-    private float ax = 0f;   // acceleration x (px/s^2)
-    private float ay = 0f;   // acceleration y (px/s^2)
+    private float ax;   // acceleration x (px/s^2)
+    private float ay;   // acceleration y (px/s^2)
     private boolean useAcceleration = false;
 
 
@@ -135,33 +135,6 @@ public class MovableObject extends GameObject {
         this.vy = -this.vy;
     }
 
-    /**
-    * Limit the object inside the frame [minX, minY]..[maxX, maxY].
-    * - If isBouncy = true: when it crosses the border, it will be placed on the border and reverse direction accordingly.
-    * - If isBouncy = false: only clamp the position, do not reverse direction (suitable for Paddle).
-    */
-    public void clampWithin(float minX, float minY, float maxX, float maxY, boolean isBouncy) {
-        float x = getXPos();
-        float y = getYPos();
-        float w = getWidth();
-        float h = getHeight();
-
-        if(x < minX) {
-            setPosition(minX, y);
-            if(isBouncy) bounceX();
-        } else if(x + w > maxX) {
-            setPosition(maxX - w, y);
-            if(isBouncy) bounceX();
-        }
-
-        if(y < minY) {
-            setPosition(getXPos(), minY);
-            if(isBouncy) bounceY();
-        } else if(y + h > maxY) {
-            setPosition(getXPos(), maxY - h);
-            if(isBouncy) bounceY();
-        }
-    }
     // --- Private utilities ---
     private float[] clampToMaxSpeed(float vx, float vy) {
         if (Float.isInfinite(maxSpeed)) return new float[]{vx, vy};
