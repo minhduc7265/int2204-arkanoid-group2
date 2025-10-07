@@ -1,5 +1,7 @@
 package com.game.arkanoid.model;
 
+import com.badlogic.gdx.math.Rectangle;
+
 /**
 * Base class for all game objects.
 * Stores position, size, state, and texture information.
@@ -12,6 +14,8 @@ public class GameObject {
     private int height;
     private boolean status;
     private String textureID;  // used to upload texture
+    public static int screenWidth; // Common screen width for all objects inherited from GameObject
+    public static int screenHeight; //Common screen height for all objects inherited from GameObject
 
     public GameObject() {
         this.x = 0;
@@ -54,6 +58,19 @@ public class GameObject {
 
     public void update() {
 
+    }
+
+    public Rectangle getbounds() {
+        return new Rectangle(x, y, width, height);
+    }
+
+    public static int getScreenWidth() { return screenWidth; }
+    public static int getScreenHeight() { return screenHeight; }
+    public static void setScreenWidth(int ScreenWidth) {
+        screenWidth = ScreenWidth;
+    }
+    public static void setScreenHeight(int ScreenHeight) {
+        screenHeight = ScreenHeight;
     }
 
 }
