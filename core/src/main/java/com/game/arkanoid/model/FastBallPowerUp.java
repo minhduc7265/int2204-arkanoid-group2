@@ -1,7 +1,11 @@
 package com.game.arkanoid.model;
 
+/**
+ * PowerUp làm tăng tốc độ di chuyển của Ball.
+ * Hiệu ứng là tạm thời và được hoàn tác sau khi hết thời gian.
+ */
 public class FastBallPowerUp extends PowerUp { 
-     private static final float SPEED_MULTIPLIER = 1.5f;
+    private static final float SPEED_MULTIPLIER = 1.5f;
     private static final int DEFAULT_DURATION = 480;
 
     /**
@@ -14,12 +18,12 @@ public class FastBallPowerUp extends PowerUp {
     }
 
     /**
-     * Áp dụng hiệu ứng: Tăng tốc độ hiện tại của Ball mà vẫn giữ nguyên hướng.
-     * <p>Nó cũng lưu lại tốc độ gốc của Ball trước khi áp dụng hiệu ứng.</p>
-     * * @param context Đối tượng GameContext.
+     * Áp dụng hiệu ứng lên Ball. (Paddle không bị ảnh hưởng)
+     * @param paddle Đối tượng Paddle 
+     * @param ball Đối tượng Ball cần thay đổi.
      */
     @Override
-    public void applyEffect(GameContext context) {
+    public void applyEffect(Paddle paddle, Ball ball) {
         Ball ball = context.getBall();
 
         if (!isPickedUp()) {
@@ -34,11 +38,12 @@ public class FastBallPowerUp extends PowerUp {
     }
 
     /**
-     * Hoàn tác hiệu ứng: Đặt tốc độ Ball trở lại tốc độ gốc đã lưu.
-     * * @param context Đối tượng GameContext.
+     * Hoàn tác hiệu ứng cho Ball.
+     * @param paddle Đối tượng Paddle 
+     * @param ball Đối tượng Ball cần hoàn tác.
      */
     @Override
-    public void removeEffect(GameContext context) {
+    public void removeEffect(Paddle paddle, Ball ball) {
         Ball ball = context.getBall();
 
         ball.applySpeed(ball.getOriginalSpeed());
