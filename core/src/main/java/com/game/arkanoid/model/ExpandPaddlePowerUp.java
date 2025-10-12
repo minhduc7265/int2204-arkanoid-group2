@@ -24,7 +24,6 @@ public class ExpandPaddlePowerUp extends PowerUp {
      */
     @Override
     public void applyEffect(Paddle paddle, Ball ball) {
-        Paddle paddle = context.getPaddle();
 
         if (!isPickedUp()) {
             paddle.setOriginalWidth(paddle.getCurrentWidth());
@@ -42,7 +41,6 @@ public class ExpandPaddlePowerUp extends PowerUp {
      */
     @Override
     public void removeEffect(Paddle paddle, Ball ball) {
-        Paddle paddle = context.getPaddle();
 
         paddle.setCurrentWidth(paddle.getOriginalWidth());
         System.out.println(paddle.getCurrentWidth());
