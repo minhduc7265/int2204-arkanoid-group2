@@ -3,6 +3,10 @@ package com.game.arkanoid.model;
 import com.game.arkanoid.model.Paddle;
 import com.game.arkanoid.model.Ball;
 
+/**
+ * Lớp trừu tượng cơ sở cho tất cả các vật phẩm tăng sức mạnh (PowerUp) trong game Arkanoid.
+ * PowerUp kế thừa từ GameObject và thêm các thuộc tính quản lý hiệu ứng tạm thời.
+ */
 public class PowerUp extends GameObject { 
     private final String type;
     private int duration;
@@ -44,9 +48,19 @@ public class PowerUp extends GameObject {
         }
     }
 
-    public abstract void applyEffect(GameContext context);
+    /**
+     * Áp dụng hiệu ứng của PowerUp lên Paddle và Ball.
+     * @param paddle Đối tượng Paddle cần thay đổi.
+     * @param ball Đối tượng Ball cần thay đổi.
+     */
+    public abstract void applyEffect(Paddle paddle, Ball ball);
 
-    public abstract void removeEffect(GameContext context);
+    /**
+     * Hoàn tác hiệu ứng của PowerUp.
+     * @param paddle Đối tượng Paddle cần hoàn tác.
+     * @param ball Đối tượng Ball cần hoàn tác.
+     */
+    public abstract void removeEffect(Paddle paddle, Ball ball);
 
     /**
      * Lấy loại PowerUp.
