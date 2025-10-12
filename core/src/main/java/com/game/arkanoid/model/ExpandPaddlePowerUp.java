@@ -1,5 +1,9 @@
 package com.game.arkanoid.model;
 
+/**
+ * PowerUp làm tăng kích thước chiều rộng của Paddle.
+ * Hiệu ứng là tạm thời và được hoàn tác sau khi hết thời gian.
+ */
 public class ExpandPaddlePowerUp extends PowerUp { 
     private static final int EXPAND_AMOUNT = 30;
     private static final int DEFAULT_DURATION = 600;
@@ -14,12 +18,12 @@ public class ExpandPaddlePowerUp extends PowerUp {
     }
 
     /**
-     * Áp dụng hiệu ứng: Tăng chiều rộng hiện tại của Paddle.
-     * <p>Nó cũng lưu lại kích thước gốc của Paddle trước khi áp dụng hiệu ứng.</p>
-     * * @param context Đối tượng GameContext.
+     * Áp dụng hiệu ứng lên Paddle. (Ball không bị ảnh hưởng)
+     * @param paddle Đối tượng Paddle cần thay đổi.
+     * @param ball Đối tượng Ball
      */
     @Override
-    public void applyEffect(GameContext context) {
+    public void applyEffect(Paddle paddle, Ball ball) {
         Paddle paddle = context.getPaddle();
 
         if (!isPickedUp()) {
@@ -32,11 +36,12 @@ public class ExpandPaddlePowerUp extends PowerUp {
     }
 
     /**
-     * Hoàn tác hiệu ứng: Đặt chiều rộng Paddle trở lại kích thước gốc đã lưu.
-     * * @param context Đối tượng GameContext.
+     * Hoàn tác hiệu ứng cho Paddle.
+     * @param paddle Đối tượng Paddle cần hoàn tác.
+     * @param ball Đối tượng Ball 
      */
     @Override
-    public void removeEffect(GameContext context) {
+    public void removeEffect(Paddle paddle, Ball ball) {
         Paddle paddle = context.getPaddle();
 
         paddle.setCurrentWidth(paddle.getOriginalWidth());
