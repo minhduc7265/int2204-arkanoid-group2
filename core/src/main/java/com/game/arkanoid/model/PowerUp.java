@@ -91,4 +91,4 @@ public class PowerUp extends GameObject {
         return isPickedUp && duration <= 0;
     }
 }
-}
+
