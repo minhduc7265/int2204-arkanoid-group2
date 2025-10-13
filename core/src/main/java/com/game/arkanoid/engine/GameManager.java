@@ -1,17 +1,21 @@
 package com.game.arkanoid.engine;
 
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-public class GameManager implements ApplicationListener {
+/**
+ * Manages the global state of the game session (score, lives, level).
+ * This is a Singleton class, meaning only one instance of it can exist.
+ */
+public class GameManager {
     private static GameManager gameManager;
-    private SpriteBatch batch;
-    private Texture background;
-    private GameManager() {
 
-    }
+    private int score;
+    private int lives;
+    private int currentLevel;
+
+    public enum GameState { RUNNING, PAUSED, GAMEOVER }
+    private GameState gameState;
+
+    private GameManager() {}
+
 
     public static GameManager getGameManager() {
         if (gameManager == null) {
@@ -20,45 +24,39 @@ public class GameManager implements ApplicationListener {
         return gameManager;
     }
 
-
-    @Override
-    public void create() {
-        // Khởi tạo SpriteBatch
-        batch = new SpriteBatch();
-        // Tải hình ảnh từ thư mục assets
-        background = new Texture(Gdx.files.internal("loadgame.png"));
-
+    /**
+     * Resets all game statistics to their starting values for a new game.
+     */
+    public void startNewGame() {
+        this.score = 0;
+        this.lives = 3;
+        this.currentLevel = 1;
+        this.gameState = GameState.RUNNING;
     }
 
-    @Override
-    public void render() {
-        batch.begin();
-        // Vẽ hình ảnh lên toàn màn hình
-        batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        // Kết thúc vẽ
-        batch.end();
+    public void goToNextLevel() {
+        this.currentLevel++;
+        // Thêm logic reset vị trí bóng/paddle ở GameWorld
+    }
+    
 
+    //extra points
+    public void addScore(int points) { this.score += points; }
+
+    /**
+     * Decrements the player's life count by one and checks for game over.
+     */
+    public void loseLife() {
+        this.lives--;
+        if (this.lives <= 0) {
+            this.gameState = GameState.GAMEOVER;
+        }
     }
 
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void dispose() {
-        batch.dispose();
-        background.dispose();
-
-    }
+    public int getScore() { return score; }
+    public int getLives() { return lives; }
+    public int getCurrentLevel() { return currentLevel; }
+    public GameState getGameState() { return gameState; }
+    public void setGameState(GameState state) { this.gameState = state; }
+    public boolean isPaused() { return this.gameState == GameState.PAUSED; }
 }

@@ -1,0 +1,10 @@
+ui_pack.png
+size: 2048, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+play_button_down
+  bounds: 0, 0, 1024, 1024
+play_button_up
+  bounds: 1024, 0, 1024, 1024
