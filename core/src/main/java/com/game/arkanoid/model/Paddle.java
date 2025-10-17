@@ -19,13 +19,12 @@ public class Paddle extends MovableObject {
     private float targetSpeed;   // maximum speed
     private float acceleration;  // key press acceleration
     private float yFinal;        // fixed Y position of the paddle
-
-    public Paddle(float yFinal, float targetSpeed) {
-        super();
-        this.yFinal = yFinal;
-        this.targetSpeed = targetSpeed;
+    private final int initialWidth; 
+    
+    public Paddle(float x, float y, int width, int height) {
+        super(x, y, width, height, "PaddleTexture");
         this.acceleration = 600f; 
-        setMaxSpeed(targetSpeed);
+        this.initialWidth = width;
     }
 
     @Override
@@ -72,4 +71,9 @@ public class Paddle extends MovableObject {
     }
 
     public float getTargetSpeed() { return targetSpeed; }
+
+    // Method to reset to original size
+    public void resetWidth() {
+        setWidth(this.initialWidth);
+    }
 }

@@ -27,6 +27,15 @@ public class MovableObject extends GameObject {
         this.ax = 0f;
         this.ay = 0f;
     }
+
+    public MovableObject(float x, float y, int width, int height, String textureID) {
+        setBounds(x, y, width, height);
+        setTextureID(textureID);        
+        this.vx = 0f;
+        this.vy = 0f;
+        this.ax = 0f;
+        this.ay = 0f;
+    }
     // --- Velcocity ---
     public void setVelocity(float vx, float vy) {
         float[] clamp = clampToMaxSpeed(vx, vy); 
