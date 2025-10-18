@@ -18,11 +18,12 @@ package com.game.arkanoid.model;
 
 public class Ball extends MovableObject {
     private float targetSpeed;  // the velocity we want to assign to the ball
+    private final float initialSpeed;
 
-    public Ball(float targetSpeed) {
-        super();
-        this.targetSpeed = targetSpeed;
-        setSpeed(this.targetSpeed);
+    public Ball(float x, float y, int weight, int height, float initialSpeed) {
+        super(x, y, weight, height, "BallTexture");
+        this.initialSpeed = initialSpeed;
+        setSpeed(initialSpeed);
         enableAcceleration(false);
     }
 
@@ -51,7 +52,7 @@ public class Ball extends MovableObject {
     // --- handle paddle ---
     public void handlePaddle(Paddle paddle) {
         // Handling collisions with the paddle at an angle
-        if(getbounds().overlaps(paddle.getbounds())) { 
+        if(collidesWith(paddle)) { 
             float ballCenterX = getXPos() + getWidth() / 2f;
             float paddleCenterX = paddle.getXPos() + paddle.getWidth() / 2f;
 
@@ -80,4 +81,8 @@ public class Ball extends MovableObject {
     }
 
     public float getTargetSpeed() { return targetSpeed; }
+
+    public void resetSpeed() {
+        setSpeed(this.initialSpeed);
+    }
 }
