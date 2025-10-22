@@ -39,4 +39,13 @@ public class FontManager {
     public void changeColor(Color color) {
         bitmapFont.setColor(color);
     }
+
+    public BitmapFont getBitmapFont() {
+        return this.bitmapFont;
+    }
+
+    public void dispose() {
+        bitmapFont.dispose();
+    }
+
 }

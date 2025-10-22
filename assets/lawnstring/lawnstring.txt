@@ -1,0 +1,17 @@
+[PLAY]
+Play
+
+[START]
+Start
+
+[PAUSE]
+Pause
+
+[LEVEL_EN]
+Level
+
+[LEVEL_CHI]
+关卡
+
+[LEVEL_JAP]
+レベル

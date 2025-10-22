@@ -44,6 +44,21 @@ public class Renderer {
     }
 
     /**
+     * This function is for drawing texture.<br>
+     * Call this second.
+     *
+     * @param ox      is posX
+     * @param oy      is posY
+     * @param width   is width
+     * @param height  is height
+     * @param texture is Texture
+     */
+
+    public void render(float ox, float oy, float width, float height, Texture texture) {
+        renderer.draw(texture, ox, oy, width, height);
+    }
+
+    /**
      * This function is for drawing text.<br>
      * Call this second.
      *
