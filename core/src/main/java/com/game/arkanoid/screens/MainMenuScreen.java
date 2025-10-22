@@ -12,20 +12,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.game.arkanoid.Main;
+import com.game.arkanoid.engine.GameManager;
 
 public class MainMenuScreen implements Screen {
     private final Main game;
     private Stage stage;
     private Skin skin;
     private Texture backgroundTexture;
+    private GameManager gameManager;//Lấy dữ liệu điểm để in ra ngoài màn hình
 
     public MainMenuScreen(Main game) {
         this.game = game;
         this.stage = new Stage(new ScreenViewport());
+        this.gameManager = GameManager.getGameManager();
 
         // Load các tài nguyên cần thiết
         this.backgroundTexture = new Texture(Gdx.files.internal("backgrounds/menu_background.png"));
-        
+
         // Load file .json, và chỉ định file .atlas tương ứng của nó
         TextureAtlas PlayAtlas = new TextureAtlas(Gdx.files.internal("skin/star_pack.atlas"));
         this.skin = new Skin(Gdx.files.internal("skin/gameskin.json"), PlayAtlas);
@@ -41,7 +44,7 @@ public class MainMenuScreen implements Screen {
         stage.addActor(table);
 
         // Tạo ImageButton bằng cách chỉ định style "default" từ file skin của bạn
-        ImageButton playButton = new ImageButton(skin, "default"); 
+        ImageButton playButton = new ImageButton(skin, "default");
 
         // Gắn sự kiện "click" cho nút Play
         playButton.addListener(new ChangeListener() {
@@ -64,6 +67,7 @@ public class MainMenuScreen implements Screen {
         // Giao việc vẽ cho MasterRenderer
         game.getMasterRenderer().clearScreen();
         game.getMasterRenderer().renderMainMenu(backgroundTexture, stage);
+        game.getMasterRenderer().renderHighScore(gameManager);
     }
 
     @Override

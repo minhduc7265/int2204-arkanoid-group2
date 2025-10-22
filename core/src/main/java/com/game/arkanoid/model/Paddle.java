@@ -1,30 +1,51 @@
 package com.game.arkanoid.model;
 
 /**
-* Paddle: represents the barrier in the game Arkanoid.
-*
-* Main features:
-* Inherits from {MovableObject}, has position, velocity and acceleration.
-* Moves along the X axis only at a fixed Y position (yFinal).
-* Has a speed limit (targetSpeed) and is controlled by acceleration.
-* Keep in screen: automatically stops when touching the left/right border.
-* 
-*
-* Usage:
-* - Call {update(float)} in the game loop to update the movement.
-* - Call {moveLeft()}, {moveRight()} or {stop()} to control the paddle.
-*/
+ * Paddle: represents the barrier in the game Arkanoid.
+ * <p>
+ * Main features:
+ * Inherits from {MovableObject}, has position, velocity and acceleration.
+ * Moves along the X axis only at a fixed Y position (yFinal).
+ * Has a speed limit (targetSpeed) and is controlled by acceleration.
+ * Keep in screen: automatically stops when touching the left/right border.
+ * <p>
+ * <p>
+ * Usage:
+ * - Call {update(float)} in the game loop to update the movement.
+ * - Call {moveLeft()}, {moveRight()} or {stop()} to control the paddle.
+ */
 
 public class Paddle extends MovableObject {
     private float targetSpeed;   // maximum speed
     private float acceleration;  // key press acceleration
     private float yFinal;        // fixed Y position of the paddle
-    private final int initialWidth; 
-    
+    private final int initialWidth;
+
     public Paddle(float x, float y, int width, int height) {
         super(x, y, width, height, "PaddleTexture");
-        this.acceleration = 600f; 
+        this.acceleration = 600f;
         this.initialWidth = width;
+    }
+
+    public float getyFinal() {
+        return this.yFinal;
+    }
+
+    public void setyFinal(float yFinal) {
+        this.yFinal = yFinal;
+    }
+
+    //Bên dưới điều khiển paddle bằng nút bấm
+    //Còn đây là dùng tọa độ chuột
+    public void updateUseMouse(float mouseOx) {
+        setPosition(mouseOx - getWidth() / 2f, yFinal);
+        if (getXPos() < 0) {
+            setPosition(0, yFinal);
+            setVelocity(0, 0);
+        } else if (getXPos() + getWidth() > screenWidth) {
+            setPosition(screenWidth - getWidth(), yFinal);
+            setVelocity(0, 0);
+        }
     }
 
     @Override
@@ -70,7 +91,9 @@ public class Paddle extends MovableObject {
         setAcceleration(0, 0);
     }
 
-    public float getTargetSpeed() { return targetSpeed; }
+    public float getTargetSpeed() {
+        return targetSpeed;
+    }
 
     // Method to reset to original size
     public void resetWidth() {

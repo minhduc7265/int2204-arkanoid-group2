@@ -8,6 +8,9 @@ import com.game.arkanoid.screens.MainMenuScreen;
 
 public class Main extends Game {
     private MasterRenderer masterRenderer;
+    public static final int SCREEN_WIDTH = 800;
+    public static final int SCREEN_HEIGHT = 800;
+    public static final int GAME_FPS = 60;
 
     @Override
     public void create() {
@@ -30,8 +33,8 @@ public class Main extends Game {
     public static void main (String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("Arkanoid Game");
-        config.setWindowedMode(800, 800);
-        config.setForegroundFPS(60);
+        config.setWindowedMode(SCREEN_WIDTH, SCREEN_HEIGHT);
+        config.setForegroundFPS(GAME_FPS);
         config.setResizable(false);
         // Khởi chạy chính lớp Main, không phải GameManager nữa
         new Lwjgl3Application(new Main(), config);

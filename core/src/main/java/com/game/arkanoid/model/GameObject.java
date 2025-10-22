@@ -15,32 +15,34 @@ public class GameObject {
     public static int screenHeight; //Common screen height for all objects inherited from GameObject
 
     public GameObject() {
+        this.bounds = new Rectangle();
         this.bounds.x = 0f;
         this.bounds.y = 0f;
         this.bounds.width = 0;
         this.bounds.height = 0;
         this.status = true;
         this.textureID = "";
-        this.bounds = new Rectangle();
     }
 
     public GameObject(float x, float y, int width, int height, String textureID) {
+        this.bounds = new Rectangle();
         this.bounds.x = x;
         this.bounds.y = y;
         this.bounds.width = width;
         this.bounds.height = height;
+        this.status = true;
         this.textureID = textureID;
     }
 
      public void setArea(int width, int height) {
         this.bounds.setSize(width, height);
-    } 
+    }
 
     public void setPosition(float x_pos, float y_pos) {
         this.bounds.x = x_pos;
         this.bounds.y = y_pos;
     }
-    
+
     public void setStatus(boolean status) {
         this.status = status;
     }
@@ -58,7 +60,7 @@ public class GameObject {
     public float getYPos() { return this.bounds.y; }
     public int getWidth() { return (int) this.bounds.width; }
     public int getHeight() { return (int) this.bounds.height; }
-    
+
     public void setTextureID(String id) {
         this.textureID = id;
     }
@@ -88,5 +90,7 @@ public class GameObject {
     public boolean collidesWith(GameObject other) {
         return this.bounds.overlaps(other.getBounds());
     }
+
+
 
 }
