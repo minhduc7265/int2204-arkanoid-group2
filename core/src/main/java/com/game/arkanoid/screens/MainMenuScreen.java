@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.game.arkanoid.Main;
 import com.game.arkanoid.engine.GameManager;
+import com.game.arkanoid.output.MasterRenderer;
 
 public class MainMenuScreen implements Screen {
     private final Main game;
@@ -51,6 +52,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.setScreen(new GameScreen(game));
+                MasterRenderer.musicFlag = false;
             }
         });
 

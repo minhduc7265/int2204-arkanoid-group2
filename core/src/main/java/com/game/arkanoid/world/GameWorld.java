@@ -1,5 +1,4 @@
 package com.game.arkanoid.world;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.game.arkanoid.engine.Collision;
@@ -7,6 +6,7 @@ import com.game.arkanoid.engine.GameManager;
 import com.game.arkanoid.model.Ball;
 import com.game.arkanoid.model.Brick;
 import com.game.arkanoid.model.Paddle;
+import com.game.arkanoid.output.SoundManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -104,27 +104,52 @@ public class GameWorld {
         return (float) Gdx.input.getX();
     }
 
-
     public void checkCollision(Ball ball, List<Brick> bricks) {
-
-        Vector2 vectorMove;
+        Vector2 vectorMove = new Vector2(ball.getVelocityX() * 1/60f, ball.getVelocityY() * 1/60f);
         float[] timeInfo = new float[2];
+        float minT = Float.MAX_VALUE;
+        Brick hitBrick = null;
+        float[] bestInfo = new float[2];
 
         for (Brick brick : bricks) {
-            vectorMove = new Vector2(ball.getVelocityX() * 1/60f, ball.getVelocityY() * 1/60f);
-            if (!brick.getStatus()) {
-                continue;
-            }
+            if (!brick.getStatus()) continue;
+
             if (Collision.IntersectMovingSphereAABB(ball.getBoundCircle(), vectorMove, brick.getBounds(), timeInfo) == 1) {
-                ball.setPosition(ball.getXPos() + timeInfo[0] * vectorMove.x, ball.getYPos() + timeInfo[0] * vectorMove.y);
-                if ((int) timeInfo[1] == 0) {
-                    ball.bounceX();
-                } else if ((int) timeInfo[1] == 1) {
-                    ball.bounceY();
+                if (timeInfo[0] < minT) {
+                    minT = timeInfo[0];
+                    hitBrick = brick;
+                    bestInfo[0] = timeInfo[0];
+                    bestInfo[1] = timeInfo[1];
                 }
-                brick.setStatus(false);
             }
         }
+
+        if (hitBrick == null) return;
+
+        ball.setPosition(ball.getXPos() + bestInfo[0] * vectorMove.x,
+            ball.getYPos() + bestInfo[0] * vectorMove.y);
+
+        if ((int) bestInfo[1] == 0) {
+            ball.bounceX();
+            System.out.println("Va cạnh dọc");
+        } else if ((int) bestInfo[1] == 1) {
+            ball.bounceY();
+            System.out.println("Va cạnh ngang");
+        } else if ((int) bestInfo[1] == 2) {
+            ball.bounceY();
+            ball.bounceX();
+            System.out.println("Va vào đỉnh");
+        }
+        else{
+            System.out.println("Không va gì");
+        }
+
+        hitBrick.setStatus(false);
+        SoundManager.getInstance().playSound("HIT");
     }
+
+
+
+
 
 }

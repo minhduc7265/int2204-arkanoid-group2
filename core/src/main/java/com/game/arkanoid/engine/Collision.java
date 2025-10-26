@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Collision {
     //Lưu ý: Mã nguồn tham khảo từ cuốn Real Time Collision Detection của Christer Ericson
-    public static final float EPSILON = 1e-6f;
+    public static final float EPSILON = 1e-12f;
 
 
     /**
@@ -115,12 +115,65 @@ public class Collision {
         int m = u + v;
         boolean isEdgeRegion = (m & (m - 1)) == 0;
 
-        if (isEdgeRegion) {
-            return 1;
-        } else {//Trường hợp va chạm đỉnh sẽ xử lí sau
-            return 0;
 
+        if(m == 3) {
+            if (checkIsVertex(new Vector2(cir.x, cir.y), vectorMove, reg, timeInfo)) return 1;
         }
+        if(isEdgeRegion) {
+            return 1;
+        }
+        return 0;
+
+    }
+    //Lưu ý: Bán kính của quả bóng là 10
+
+    public static boolean checkIsVertex(Vector2 center, Vector2 vectorMove, Rectangle reg, float[] timeInfo) {
+        Vector2 p_o = new Vector2(center);
+        Vector2 p_1 = new Vector2(center.x + vectorMove.x, center.y + vectorMove.y);
+        float t_min = Float.MAX_VALUE;
+        Vector2[] arr = {
+            new Vector2(reg.x, reg.y),
+            new Vector2(reg.x + reg.width, reg.y),
+            new Vector2(reg.x + reg.width, reg.y + reg.height),
+            new Vector2(reg.x, reg.y + reg.height)
+        };
+
+        for (Vector2 vt2 : arr) {
+            float t = Float.MAX_VALUE;
+            float coefficient_a = euclidDotProduct(new Vector2(p_1.x - p_o.x, p_1.y - p_o.y), new Vector2(p_1.x - p_o.x, p_1.y - p_o.y));
+            float coefficient_b = 2f * euclidDotProduct(new Vector2(p_o.x - vt2.x, p_o.y - vt2.y), new Vector2(p_1.x - p_o.x, p_1.y - p_o.y));
+            float coefficient_c = euclidDotProduct(new Vector2(p_o.x - vt2.x, p_o.y - vt2.y), new Vector2(p_o.x - vt2.x, p_o.y - vt2.y)) - (10f * 10f);
+            float delta = coefficient_b * coefficient_b - 4 * coefficient_a * coefficient_c;
+            if (delta < 0) {
+                continue;
+            } else if (coefficient_a <= Collision.EPSILON) {
+                if (coefficient_b <= Collision.EPSILON) continue;
+                float t0 = -coefficient_c / coefficient_b;
+                if (t0 >= 0f && t0 <= 1f && t0 <= t) t = t0;
+
+            } else {
+                float t1 = (-coefficient_b + (float) Math.sqrt(delta)) / (2 * coefficient_a);
+                float t2 = (-coefficient_b - (float) Math.sqrt(delta)) / (2 * coefficient_a);
+                if (t1 >= 0f && t1 <= 1f && t1 <= t) t = t1;
+                if (t2 >= 0f && t2 <= 1f && t2 <= t) t = t2;
+            }
+            if (t >= 0f && t <= 1f && t <= t_min) {
+                t_min = t;
+            }
+        }
+        if (timeInfo != null && t_min >= 0f && t_min <= 1f && t_min <= timeInfo[0]) {
+            timeInfo[0] = t_min;
+            timeInfo[1] = (float) 2;
+            return true;
+        }
+        return false;
+
+
+    }
+
+
+    public static float euclidDotProduct(Vector2 vector_1, Vector2 vector_2) {
+        return vector_1.x * vector_2.x + vector_1.y * vector_2.y;
 
     }
 }

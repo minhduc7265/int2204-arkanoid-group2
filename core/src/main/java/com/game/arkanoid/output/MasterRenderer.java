@@ -16,6 +16,7 @@ import java.util.List;
 public class MasterRenderer {
     private Renderer renderer;
     private TextureManager textureManager;
+    private SoundManager soundManager;
     // TODO: Thêm FontManager để vẽ chữ
     private FontManager font;
     // Để render điểm cao nhất
@@ -26,13 +27,21 @@ public class MasterRenderer {
     private TextObject currentHeart;
     //Để render level hiện tại
     private TextObject currentLevel;
+    //Music
+    private long hMusic;
+
+    public static boolean musicFlag;
 
 
     public MasterRenderer() {
+        MasterRenderer.musicFlag = false;
         GameObject.setScreenWidth(800);
         GameObject.setScreenHeight(800);
         textureManager = TextureManager.getInstance();
-        loadTexture();
+        soundManager = SoundManager.getInstance();
+
+        loadBass();
+
         renderer = new Renderer();
         font = new FontManager("font/font_a.ttf", 24);
         highScore = new TextObject("", 50f, 50f);
@@ -47,6 +56,11 @@ public class MasterRenderer {
     }
 
     public void renderMainMenu(Texture background, Stage stage) {
+        if (MasterRenderer.musicFlag != true) {
+            Bass.INSTANCE.BASS_ChannelSetPosition(hMusic, 48 | (0 << 8), Bass.BASS_POS_MUSIC_ORDER);
+            Bass.INSTANCE.BASS_ChannelPlay(hMusic, false);
+            MasterRenderer.musicFlag = true;
+        }
         renderer.beginRender();
         renderer.render(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), background);
         renderer.endRender();
@@ -55,6 +69,13 @@ public class MasterRenderer {
     }
 
     public void renderGameWorld(GameWorld world) {
+        if (MasterRenderer.musicFlag != true) {
+            Bass.INSTANCE.BASS_ChannelSetPosition(hMusic, 0 | (0 << 8), Bass.BASS_POS_MUSIC_ORDER);
+            Bass.INSTANCE.BASS_ChannelPlay(hMusic, false);
+
+
+            MasterRenderer.musicFlag = true;
+        }
         List<Brick> bricks = world.getBricks();
         Ball ball = world.getBalls();
         Paddle paddle = world.getPaddle();
@@ -114,16 +135,30 @@ public class MasterRenderer {
         renderer.dispose();
         textureManager.dispose();
         // font.dispose();
+
+
+        Bass.INSTANCE.BASS_MusicFree(hMusic);
+        Bass.INSTANCE.BASS_Free();
     }
 
-    public void loadTexture() {
-        textureManager.loadTextures("BRICK_1", "textures/brick_1.png");
-        textureManager.loadTextures("BRICK_2", "textures/brick_2.png");
-        textureManager.loadTextures("BRICK_3", "textures/brick_3.png");
-        textureManager.loadTextures("BALL_1", "textures/ball_1.png");
-        textureManager.loadTextures("BALL_2", "textures/ball_2.png");
-        textureManager.loadTextures("BALL_3", "textures/ball_3.png");
-        textureManager.loadTextures("PADDLE_NORMAL", "textures/paddle.png");
-        textureManager.loadTextures("CHALLENGE_CHAOS_BG", "images/challenge_chaos_bg.png");
+
+    public void loadBass() {
+        System.out.println("Trying to initialize BASS using JNA...");
+        System.out.println(System.getProperty("java.library.path"));
+        boolean isInitialized = Bass.INSTANCE.BASS_Init(Bass.BASS_DEVICE_DEFAULT, 44100, 0, 0, 0);
+        if (!isInitialized) {
+            System.err.println("BASS initialization failed!");
+            return;
+        }
+        System.out.println("BASS initialized successfully!");
+        //Khi build dùng nó
+        //String filePath = "sound/mainmusic.mo3";
+        String filePath = "assets/sound/mainmusic.mo3";
+        hMusic = Bass.INSTANCE.BASS_MusicLoad(false, filePath, 0, 0, 0, 0);
+        if (hMusic == 0) {
+            System.err.println("Unable to load music file: " + filePath);
+            Bass.INSTANCE.BASS_Free();
+            return;
+        }
     }
 }

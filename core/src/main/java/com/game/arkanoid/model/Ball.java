@@ -26,7 +26,7 @@ public class Ball extends MovableObject {
 
     public Ball(float x, float y, int weight, int height, float initialSpeed) {
         super(x, y, weight, height, "BallTexture");
-        this.boundCircle = new Circle(x, y, 20f);
+        this.boundCircle = new Circle(x, y, 11f);
         this.initialSpeed = initialSpeed;
         setSpeed(initialSpeed);
         enableAcceleration(false);

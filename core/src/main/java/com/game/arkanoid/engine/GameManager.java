@@ -38,7 +38,7 @@ public class GameManager {
         this.currentLevel++;
         // Thêm logic reset vị trí bóng/paddle ở GameWorld
     }
-    
+
 
     //extra points
     public void addScore(int points) { this.score += points; }

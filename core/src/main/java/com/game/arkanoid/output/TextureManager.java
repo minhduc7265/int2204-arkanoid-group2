@@ -16,6 +16,7 @@ public class TextureManager {
 
     private TextureManager() {
         listTextures = new HashMap<>();
+        loadListTexture();
     }
 
     /**
@@ -80,5 +81,19 @@ public class TextureManager {
             texture.dispose();
         }
         listTextures.clear();
+    }
+
+    public void loadListTexture() {
+        loadTextures("BRICK_1", "textures/brick_1.png");
+        loadTextures("BRICK_2", "textures/brick_2.png");
+        loadTextures("BRICK_3", "textures/brick_3.png");
+        loadTextures("BALL_1", "textures/ball_1.png");
+        loadTextures("BALL_2", "textures/ball_2.png");
+        loadTextures("BALL_3", "textures/ball_3.png");
+        loadTextures("PADDLE_NORMAL", "textures/paddle.png");
+        loadTextures("CHALLENGE_CHAOS_BG", "images/challenge_chaos_bg.png");
+
+
+        loadTextures("CLOUD_SHEET","spritesheet/cloud.png");
     }
 }
