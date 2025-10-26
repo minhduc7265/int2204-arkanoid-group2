@@ -15,6 +15,7 @@ public class SoundManager {
 
     private SoundManager() {
         listSounds = new HashMap<>();
+        loadListSound();
     }
 
     /**
@@ -75,6 +76,13 @@ public class SoundManager {
             sound.dispose();
         }
         listSounds.clear();
+    }
+
+    public void loadListSound() {
+        loadSound("HIT","sound/hit.ogg");
+        loadSound("BOMB", "sound/bomb.ogg");
+
+
     }
 
 
