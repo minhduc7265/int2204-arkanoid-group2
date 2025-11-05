@@ -48,7 +48,7 @@ public class GameManager {
      */
     public void loseLife() {
         this.lives--;
-        if (this.lives <= 0) {
+        if (this.lives < 0) {
             this.gameState = GameState.GAMEOVER;
         }
     }

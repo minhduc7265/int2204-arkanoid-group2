@@ -6,7 +6,7 @@ import com.game.arkanoid.model.PowerUp.PowerUpType;
 * Base class for all PowerUp items in Arkanoid.
 * PowerUp inherits from GameObject and adds properties that manage temporary effects.
 */
-public class PowerUp extends GameObject { 
+public class PowerUp extends GameObject {
      public enum PowerUpType {
         EXPAND_PADDLE,
         FAST_BALL
@@ -18,12 +18,12 @@ public class PowerUp extends GameObject {
     private final float FALL_SPEED = 2.0f;
     private final int initialDuration;
 
-   
+
 
     public PowerUp(float x, float y, PowerUpType type, int duration) {
         super();
         setPosition(x, y);
-        setArea(30, 15);
+        setArea(70, 63);
         setTextureID("PowerUp_" + type);
         setStatus(true);
         this.type = type;
@@ -33,7 +33,7 @@ public class PowerUp extends GameObject {
 
    /**
     * Update the status of the PowerUp: dropped if not picked up, or countdown if picked up.
-    * <p>The PowerUp will automatically set status=false when the validity period expires 
+    * <p>The PowerUp will automatically set status=false when the validity period expires
          to signal that the Effect needs to be removed.</p>
     */
     @Override
@@ -51,7 +51,7 @@ public class PowerUp extends GameObject {
 
     // Apply the PowerUp effect to the Paddle and Ball.
     public void applyEffect(Paddle paddle, Ball ball){}
-     
+
     // Undo the PowerUp effect.
     public void removeEffect(Paddle paddle, Ball ball){}
 
@@ -73,7 +73,7 @@ public class PowerUp extends GameObject {
         this.duration -= amount;
     }
 
-    public void resetDuration() { 
+    public void resetDuration() {
         this.duration = this.initialDuration;
     }
 

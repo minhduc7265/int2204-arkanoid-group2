@@ -1,8 +1,10 @@
 package com.game.arkanoid.output;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.game.arkanoid.model.GameObject;
 
 public class Renderer {
@@ -43,6 +45,11 @@ public class Renderer {
         renderer.draw(texture, obj.getXPos(), obj.getYPos(), obj.getWidth(), obj.getHeight());
     }
 
+    public void renderCircle(GameObject obj, Texture texture) {
+        renderer.draw(texture, obj.getXPos() - obj.getWidth() / 2f, obj.getYPos() - obj.getHeight() / 2f);
+    }
+
+
     /**
      * This function is for drawing texture.<br>
      * Call this second.
@@ -56,6 +63,19 @@ public class Renderer {
 
     public void render(float ox, float oy, float width, float height, Texture texture) {
         renderer.draw(texture, ox, oy, width, height);
+    }
+
+
+    public void render(float ox, float oy, TextureRegion texture) {
+        renderer.draw(texture, ox, oy);
+    }
+
+    public void setColor(Color color) {
+        renderer.setColor(color);
+    }
+
+    public void setColor(float r, float g, float b, float a) {
+        renderer.setColor(r, g, b, a);
     }
 
     /**

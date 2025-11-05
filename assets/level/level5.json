@@ -1,66 +1,188 @@
 {
-  "level": "5",
+  "level": 1,
 
   "brick": [
     {
       "ox": 0,
       "oy": 600,
-      "power": 1
+      "power": 1,
+      "item" : 1
     },
     {
       "ox": 80,
       "oy": 600,
-      "power": 2
+      "power": 2,
+      "item": 1
     },
     {
       "ox": 160,
       "oy": 600,
-      "power": 1
+      "power": 3,
+      "item": 1
     },
     {
       "ox": 240,
       "oy": 600,
-      "power": 0
+      "power": 4,
+      "item": 1
     },
     {
       "ox": 320,
       "oy": 600,
-      "power": 1
+      "power": 5,
+      "item": 2
     },
     {
       "ox": 400,
       "oy": 600,
-      "power": 1
+      "power": 6,
+      "item": 0
     },
     {
       "ox": 480,
       "oy": 600,
-      "power": 3
+      "power": 3,
+      "item": 0
     },
     {
       "ox": 560,
       "oy": 600,
-      "power": 1
+      "power": 1,
+      "item": 0
     },
     {
       "ox": 640,
       "oy": 600,
-      "power": 1
+      "power": 1,
+      "item": 0
     },
     {
       "ox": 720,
       "oy": 600,
-      "power": 4
+      "power": 4,
+      "item": 0
     },
     {
       "ox": 0,
       "oy": 632,
-      "power": 5
+      "power": 1,
+      "item": 0
     },
     {
       "ox": 80,
       "oy": 632,
-      "power": 2
+      "power": 2,
+      "item": 0
+    },
+    {
+      "ox": 160,
+      "oy": 632,
+      "power": 1,
+      "item": 0
+    },
+    {
+      "ox": 240,
+      "oy": 632,
+      "power": 4,
+      "item": 0
+    },
+    {
+      "ox": 320,
+      "oy": 632,
+      "power": 1,
+      "item": 0
+    },
+    {
+      "ox": 400,
+      "oy": 632,
+      "power": 1,
+      "item": 0
+    },
+    {
+      "ox": 480,
+      "oy": 632,
+      "power": 3,
+      "item": 0
+    },
+    {
+      "ox": 560,
+      "oy": 632,
+      "power": 1,
+      "item": 0
+    },
+    {
+      "ox": 640,
+      "oy": 632,
+      "power": 1,
+      "item": 0
+    },
+    {
+      "ox": 720,
+      "oy": 632,
+      "power": 4,
+      "item": 0
+    },
+    {
+      "ox": 0,
+      "oy": 664,
+      "power": 1,
+      "item": 0
+    },
+    {
+      "ox": 80,
+      "oy": 664,
+      "power": 2,
+      "item": 0
+    },
+    {
+      "ox": 160,
+      "oy": 664,
+      "power": 1,
+      "item": 0
+    },
+    {
+      "ox": 240,
+      "oy": 664,
+      "power": 3,
+      "item": 1
+    },
+    {
+      "ox": 320,
+      "oy": 664,
+      "power": 1,
+      "item": 1
+    },
+    {
+      "ox": 400,
+      "oy": 664,
+      "power": 1,
+      "item": 0
+    },
+    {
+      "ox": 480,
+      "oy": 664,
+      "power": 3,
+      "item": 1
+    },
+    {
+      "ox": 560,
+      "oy": 664,
+      "power": 1,
+      "item": 2
+    },
+    {
+      "ox": 640,
+      "oy": 664,
+      "power": 1,
+      "item": 2
+    },
+    {
+      "ox": 720,
+      "oy": 664,
+      "power": 4,
+      "item": 0
     }
+
+
   ]
 }

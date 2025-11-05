@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.game.arkanoid.Main;
 import com.game.arkanoid.engine.GameManager;
+import com.game.arkanoid.output.Bass;
+import com.game.arkanoid.output.MasterRenderer;
 import com.game.arkanoid.world.GameWorld;
 
 public class GameScreen implements Screen {
@@ -24,8 +26,10 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             if (gameManager.isPaused()) {
                 gameManager.setGameState(GameManager.GameState.RUNNING);
+                Bass.INSTANCE.BASS_ChannelPlay(MasterRenderer.hMusic, false);
             } else {
                 gameManager.setGameState(GameManager.GameState.PAUSED);
+                Bass.INSTANCE.BASS_ChannelPause(MasterRenderer.hMusic);
             }
         }
 

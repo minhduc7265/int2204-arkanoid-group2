@@ -1,179 +1,176 @@
 package com.game.arkanoid.engine;
 
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Collision {
     //Lưu ý: Mã nguồn tham khảo từ cuốn Real Time Collision Detection của Christer Ericson
-    public static final float EPSILON = 1e-12f;
+    public static final float EPSILON = 1e-6f;
+
+    public static Point Corner(AABB b, int n) {
+        Point p = new Point();
+        p.x = ((n & 1) != 0 ? b.max.x : b.min.x);
+        p.y = ((n & 2) != 0 ? b.max.y : b.min.y);
+        return p;
+    }
 
 
-    /**
-     * @param center     là tọa độ tâm HIỆN TẠI
-     * @param vectorMove là vector di chuyển tức cháu nó đi được bao xa theo hai hướng
-     * @param minkow     là cái hình to để so sánh
-     * @return chạm hay không chạm
-     */
-    public static boolean IntersectRayAABB(Vector2 center, Vector2 vectorMove, Rectangle minkow, float[] timeInfo, Vector2 point) {
-        float t_min = 0f;
-        float t_max = 1f;
-        int hit = -1;
+    public static int IntersectRayAABB(Point p, Vector2 d, AABB a, float[] tmin, Point q) {
+        float tMIN = 0.0f;
+        float tMAX = Float.MAX_VALUE;
 
-        /// Trục OX
-        // Nếu vận tốc Trục OX = 0 Hay vectorMove.x == 0
-        if (Math.abs(vectorMove.x) < Collision.EPSILON) {
-            //Nếu tia bắn vào nằm ngoài thì không chạm
-            if (center.x < minkow.x || center.x > minkow.x + minkow.width) {//    .   [      ]   .
-                return false;
-            }
+
+        if (Math.abs(d.x) < EPSILON) {//Nếu vận tốc x ~ 0
+            if (p.x < a.min.x || p.x > a.max.x) return 0;// Nếu nằm ngoài thì thôi
         } else {
-            float opVectorMoveX = 1f / vectorMove.x;//One per VectorMoveX
-            float t1_X = (minkow.x - center.x) * opVectorMoveX;
-            float t2_X = (minkow.x + minkow.width - center.x) * opVectorMoveX;
-            if (t1_X > t2_X) {
-                float temp = t2_X;
-                t2_X = t1_X;
-                t1_X = temp;
+            float oneOverDx = 1.0f / d.x;
+            //Tính toán t1 và t2 -> t vào và t ra
+            float t1 = (a.min.x - p.x) * oneOverDx;
+            float t2 = (a.max.x - p.x) * oneOverDx;
+            //Chuẩn hóa t1, t2
+            if (t1 > t2) {
+                float ttemp = t1;
+                t1 = t2;
+                t2 = ttemp;
             }
-            if (t1_X > t_min) hit = 0;
+            tMIN = Math.max(tMIN, t1);
+            tMAX = Math.min(tMAX, t2);
 
-            t_min = Math.max(t_min, t1_X);
-            t_max = Math.min(t_max, t2_X);
-
-            if (t_min > t_max) return false;
-
-
+            //Nếu tMIN > tMAX -> vô lí nên dẹp
+            if (tMIN > tMAX) return 0;
         }
 
-        if (Math.abs(vectorMove.y) < Collision.EPSILON) {
-            //Nếu tia bắn vào nằm ngoài thì không chạm
-            if (center.y < minkow.y || center.y > minkow.y + minkow.height) {//    .   [      ]   .
-                return false;
-            }
+        if (Math.abs(d.y) < EPSILON) {//Nếu vận tốc y ~ 0
+            if (p.y < a.min.y || p.y > a.max.y) return 0;// Nếu nằm ngoài thì thôi
         } else {
-            float opVectorMoveY = 1f / vectorMove.y;//One per VectorMoveY
-            float t1_Y = (minkow.y - center.y) * opVectorMoveY;
-            float t2_Y = (minkow.y + minkow.height - center.y) * opVectorMoveY;
-            if (t1_Y > t2_Y) {
-                float temp = t2_Y;
-                t2_Y = t1_Y;
-                t1_Y = temp;
+            float oneOverDy = 1.0f / d.y;
+            //Tính toán t1 và t2 -> t vào và t ra
+            float t1 = (a.min.y - p.y) * oneOverDy;
+            float t2 = (a.max.y - p.y) * oneOverDy;
+            //Chuẩn hóa t1, t2
+            if (t1 > t2) {
+                float ttemp = t1;
+                t1 = t2;
+                t2 = ttemp;
             }
-            if (t1_Y > t_min) hit = 1;
+            tMIN = Math.max(tMIN, t1);
+            tMAX = Math.min(tMAX, t2);
 
-            t_min = Math.max(t_min, t1_Y);
-            t_max = Math.min(t_max, t2_Y);
-
-            if (t_min > t_max) return false;
-
-
+            //Nếu tMIN > tMAX -> vô lí nên dẹp
+            if (tMIN > tMAX) return 0;
         }
 
-        if (timeInfo != null) {
-            timeInfo[0] = t_min;
-            timeInfo[1] = (float) hit;
-        }
-        if (point != null) {
-            point.x = center.x + vectorMove.x * t_min;
-            point.y = center.y + vectorMove.y * t_min;
-        }
+        tmin[0] = tMIN;
 
-        return true;
+        q.x = p.x + tMIN * d.x;
+        q.y = p.y + tMIN * d.y;
+
+        return 1;
 
 
     }
 
 
-    public static int IntersectMovingSphereAABB(Circle cir, Vector2 vectorMove, Rectangle reg, float[] timeInfo) {
-        //Bước 1, tạo tổng Minkowski cho [cir] và [reg]
-        Rectangle minkowReg = new Rectangle(0f, 0f, 0f, 0f);
-        minkowReg.x = reg.x - cir.radius;
-        minkowReg.y = reg.y - cir.radius;
-        minkowReg.width = reg.width + 2 * cir.radius;
-        minkowReg.height = reg.height + 2 * cir.radius;
+    public static int IntersectMovingSphereAABB(Circle c, Vector2 d, Rectangle rec, float[] time) {
+        //c là cái quả bóng
+        //rec là viên gạch
+        //d là vector di chuyển tức là hướng quả bóng nó sẽ di chuyển
+        //Convert rec thành AABB
+        AABB b = new AABB(0f, 0f, 0f, 0f);
+        b.min.x = rec.x;
+        b.min.y = rec.y;
+        b.max.x = rec.x + rec.width;
+        b.max.y = rec.y + rec.height;
+        //Tạo hình mở rộng[minkow]
+        AABB e = new AABB(0f, 0f, 0f, 0f);
+        e.min.x = b.min.x - c.radius;
+        e.min.y = b.min.y - c.radius;
+        e.max.x = b.max.x + c.radius;
+        e.max.y = b.max.y + c.radius;
 
 
-        Vector2 point = new Vector2(0f, 0f);
+        Point p = new Point();
 
-        //Tính toán chỗ va chạm
-        if (!IntersectRayAABB(new Vector2(cir.x, cir.y), vectorMove, minkowReg, timeInfo, point) || timeInfo[0] > 1f) {
-            return 0;//Không chạm thì dừng luôn khỏi làm gì
+        //Tức là không va
+        if (IntersectRayAABB(new Point(c.x, c.y), d, e, time, p) == 0 || time[0] > 1f) {
+            return 0;
         }
-
 
         int u = 0;
         int v = 0;
 
-        //Tìm xem nó sẽ va chỗ nào.
-        if (point.x < reg.x) u = u | 1;
-        if (point.x > reg.x + reg.width) v = v | 1;
-        if (point.y < reg.y) u = u | 2;
-        if (point.y > reg.y + reg.height) v = v | 2;
+        //Bây giờ xem nó đang va ở chỗ nào
+        if (p.x < b.min.x) u |= 1;
+        if (p.x > b.max.x) v |= 1;
+        if (p.y < b.min.y) u |= 2;
+        if (p.y > b.max.y) v |= 2;
 
-
+        //Lấy kết quả sau
         int m = u + v;
-        boolean isEdgeRegion = (m & (m - 1)) == 0;
 
+        //Tạo đường di chuyển
+        //Kết quả sẽ là 1 đươờng thằng với điểm đầu và điểm cuối
+        Segment seg = new Segment(new Point(c.x, c.y), new Point(c.x + d.x, c.y + d.y));
 
-        if(m == 3) {
-            if (checkIsVertex(new Vector2(cir.x, cir.y), vectorMove, reg, timeInfo)) return 1;
-        }
-        if(isEdgeRegion) {
+        //Lây kết quả sau
+        boolean isEgde = (m & (m - 1)) == 0;
+
+        if (isEgde) {
+            if (m == 1) {
+                time[1] = 1f;
+            } else if (m == 2) {
+                time[1] = 2f;
+            }
             return 1;
         }
+
+        //Nếu m == 3 thì sử dụng hàm sau
+
+        Point corner = Collision.Corner(b, v);
+        return IntersectSegmentCircle(seg, corner, c.radius, time);
+
+
+    }
+
+    private static int IntersectSegmentCircle(Segment seg, Point p, float r, float[] time) {
+        Vector2 d = new Vector2(seg.p1.x - seg.p0.x, seg.p1.y - seg.p0.y);
+        Vector2 m = new Vector2(seg.p0.x - p.x, seg.p0.y - p.y);
+        float pow2r = r * r;
+        //Tính 3 hệ số sau
+        float a = d.dot(d);
+        float b = 2f * m.dot(d);
+        float c = m.dot(m) - pow2r;
+
+        if (c < 0.0f) {
+            time[0] = 0.0f;
+            return 1;
+        }
+        float delta = b * b - 4f * a * c;
+        //Delta < 0 thì vô nghiệm tức không va gì hết
+        if (delta < 0.0f) {
+            return 0;
+        }
+
+
+        float t0 = (-b + (float) Math.sqrt(delta)) / (2.0f * a);
+        float t1 = (-b - (float) Math.sqrt(delta)) / (2.0f * a);
+
+        if (t0 >= 0.0f && t0 <= 1.0f && t0 < time[0]) {
+            time[0] = t0;
+            time[1] = 3f;
+            return 1;
+        }
+        if (t1 >= 0.0f && t1 <= 1.0f && t1 < time[0]) {
+            time[0] = t1;
+            time[1] = 3f;
+            return 1;
+        }
+
         return 0;
 
     }
-    //Lưu ý: Bán kính của quả bóng là 10
-
-    public static boolean checkIsVertex(Vector2 center, Vector2 vectorMove, Rectangle reg, float[] timeInfo) {
-        Vector2 p_o = new Vector2(center);
-        Vector2 p_1 = new Vector2(center.x + vectorMove.x, center.y + vectorMove.y);
-        float t_min = Float.MAX_VALUE;
-        Vector2[] arr = {
-            new Vector2(reg.x, reg.y),
-            new Vector2(reg.x + reg.width, reg.y),
-            new Vector2(reg.x + reg.width, reg.y + reg.height),
-            new Vector2(reg.x, reg.y + reg.height)
-        };
-
-        for (Vector2 vt2 : arr) {
-            float t = Float.MAX_VALUE;
-            float coefficient_a = euclidDotProduct(new Vector2(p_1.x - p_o.x, p_1.y - p_o.y), new Vector2(p_1.x - p_o.x, p_1.y - p_o.y));
-            float coefficient_b = 2f * euclidDotProduct(new Vector2(p_o.x - vt2.x, p_o.y - vt2.y), new Vector2(p_1.x - p_o.x, p_1.y - p_o.y));
-            float coefficient_c = euclidDotProduct(new Vector2(p_o.x - vt2.x, p_o.y - vt2.y), new Vector2(p_o.x - vt2.x, p_o.y - vt2.y)) - (10f * 10f);
-            float delta = coefficient_b * coefficient_b - 4 * coefficient_a * coefficient_c;
-            if (delta < 0) {
-                continue;
-            } else if (coefficient_a <= Collision.EPSILON) {
-                if (coefficient_b <= Collision.EPSILON) continue;
-                float t0 = -coefficient_c / coefficient_b;
-                if (t0 >= 0f && t0 <= 1f && t0 <= t) t = t0;
-
-            } else {
-                float t1 = (-coefficient_b + (float) Math.sqrt(delta)) / (2 * coefficient_a);
-                float t2 = (-coefficient_b - (float) Math.sqrt(delta)) / (2 * coefficient_a);
-                if (t1 >= 0f && t1 <= 1f && t1 <= t) t = t1;
-                if (t2 >= 0f && t2 <= 1f && t2 <= t) t = t2;
-            }
-            if (t >= 0f && t <= 1f && t <= t_min) {
-                t_min = t;
-            }
-        }
-        if (timeInfo != null && t_min >= 0f && t_min <= 1f && t_min <= timeInfo[0]) {
-            timeInfo[0] = t_min;
-            timeInfo[1] = (float) 2;
-            return true;
-        }
-        return false;
 
 
-    }
-
-
-    public static float euclidDotProduct(Vector2 vector_1, Vector2 vector_2) {
-        return vector_1.x * vector_2.x + vector_1.y * vector_2.y;
-
-    }
 }

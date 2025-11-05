@@ -1,16 +1,18 @@
 package com.game.arkanoid.model;
 
+import com.game.arkanoid.output.SoundManager;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Optional;
 
 /**
-* Manages the entire lifecycle of PowerUp objects in the game.
-* This class is responsible for creating, updating state, checking for collisions,
-* and applying effects of PowerUps. It plays a central role in keeping the logic related to power-ups
-* clean and focused on the main game coordination.
-*/
+ * Manages the entire lifecycle of PowerUp objects in the game.
+ * This class is responsible for creating, updating state, checking for collisions,
+ * and applying effects of PowerUps. It plays a central role in keeping the logic related to power-ups
+ * clean and focused on the main game coordination.
+ */
 
 public class PowerUpManager {
     // List contains only active Power-Ups
@@ -21,17 +23,18 @@ public class PowerUpManager {
     }
 
     /**
-    * Factory method to create a Power-Up from a brick.
-    */
-        public void createPowerUpFromBrick(Brick brick) {
-        int flag = brick.getFlag();
-        if (flag == 0) return; // Factory method to create a Power-Up from a brick.
+     * Factory method to create a Power-Up from a brick.
+     */
+    public void createPowerUpFromBrick(Brick brick) {
+        if(brick == null) return;
+        int item = brick.getItem();
+        if (item == 0) return; // Factory method to create a Power-Up from a brick.
 
         float x = brick.getXPos();
         float y = brick.getYPos();
         PowerUp newPowerUp = null;
 
-        switch (flag) {
+        switch (item) {
             case 1:
                 newPowerUp = new ExpandPaddlePowerUp(x, y);
                 break;
@@ -46,8 +49,8 @@ public class PowerUpManager {
     }
 
     /**
-    * Update all Power-Ups (called in game loop).
-    */
+     * Update all Power-Ups (called in game loop).
+     */
     public void updateAll() {
         Iterator<PowerUp> iterator = activePowerUps.iterator();
         while (iterator.hasNext()) {
@@ -61,10 +64,10 @@ public class PowerUpManager {
     }
 
     /**
-    * Helper function: Find an activated Power-Up by type.
-    * type The type of Power-Up to search for.
-    * returns a PowerUp object if found, otherwise returns an empty (Optional.empty).
-    */
+     * Helper function: Find an activated Power-Up by type.
+     * type The type of Power-Up to search for.
+     * returns a PowerUp object if found, otherwise returns an empty (Optional.empty).
+     */
     private Optional<PowerUp> findActivePowerUpByType(PowerUp.PowerUpType type) {
         for (PowerUp powerUp : activePowerUps) {
             // Điều kiện: Cùng loại VÀ đã được nhặt (đang có hiệu lực)
@@ -72,12 +75,12 @@ public class PowerUpManager {
                 return Optional.of(powerUp);
             }
         }
-        return Optional.empty(); 
+        return Optional.empty();
     }
 
     /**
-    * Check for collision with the paddle and apply effects.
-    */
+     * Check for collision with the paddle and apply effects.
+     */
     public void checkCollisionsAndApplyEffects(Paddle paddle, Ball ball) {
         Iterator<PowerUp> iterator = activePowerUps.iterator();
         while (iterator.hasNext()) {
@@ -93,14 +96,15 @@ public class PowerUpManager {
                     //IF YES: Reset the time of the old effect
                     PowerUp existingPowerUp = existingPowerUpOpt.get();
                     existingPowerUp.resetDuration();
-                        
+
                     // Delete the Power-Up you just picked up because it is only used to reset the time
                     iterator.remove();
-                        
+
                 } else {
                     //IF NOT: Apply the new effect as usual
                     powerUp.applyEffect(paddle, ball);
                     powerUp.setPickedUp(true);
+                    SoundManager.getInstance().playSound("APPLY_EFFECT");
 
                     // If the effect has no duration (instant), remove it
                     if (powerUp.isFinished()) {
@@ -109,7 +113,7 @@ public class PowerUpManager {
                 }
             }
         }
-    }   
+    }
 
     public List<PowerUp> getActivePowerUps() {
         return this.activePowerUps;

@@ -1,16 +1,14 @@
 package com.game.arkanoid.output;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.game.arkanoid.engine.GameManager;
-import com.game.arkanoid.model.Ball;
-import com.game.arkanoid.model.Brick;
-import com.game.arkanoid.model.GameObject;
-import com.game.arkanoid.model.Paddle;
+import com.game.arkanoid.model.*;
 import com.game.arkanoid.world.GameWorld;
-
+import java.util.Iterator;
 import java.util.List;
 
 public class MasterRenderer {
@@ -27,13 +25,17 @@ public class MasterRenderer {
     private TextObject currentHeart;
     //Để render level hiện tại
     private TextObject currentLevel;
-    //Music
-    private long hMusic;
+    //Music--> Chuyển thành private khi tổ chức lại dữ liệu
+    public static long hMusic;
 
     public static boolean musicFlag;
 
 
+    public int timeChangeColor;
+
+
     public MasterRenderer() {
+        timeChangeColor = 0;
         MasterRenderer.musicFlag = false;
         GameObject.setScreenWidth(800);
         GameObject.setScreenHeight(800);
@@ -41,6 +43,8 @@ public class MasterRenderer {
         soundManager = SoundManager.getInstance();
 
         loadBass();
+        AnimationSpriteSheet.loadAnim();
+
 
         renderer = new Renderer();
         font = new FontManager("font/font_a.ttf", 24);
@@ -57,7 +61,7 @@ public class MasterRenderer {
 
     public void renderMainMenu(Texture background, Stage stage) {
         if (MasterRenderer.musicFlag != true) {
-            Bass.INSTANCE.BASS_ChannelSetPosition(hMusic, 48 | (0 << 8), Bass.BASS_POS_MUSIC_ORDER);
+            Bass.INSTANCE.BASS_ChannelSetPosition(hMusic, 0xC | (0 << 8), Bass.BASS_POS_MUSIC_ORDER);
             Bass.INSTANCE.BASS_ChannelPlay(hMusic, false);
             MasterRenderer.musicFlag = true;
         }
@@ -70,25 +74,52 @@ public class MasterRenderer {
 
     public void renderGameWorld(GameWorld world) {
         if (MasterRenderer.musicFlag != true) {
-            Bass.INSTANCE.BASS_ChannelSetPosition(hMusic, 0 | (0 << 8), Bass.BASS_POS_MUSIC_ORDER);
+            Bass.INSTANCE.BASS_ChannelSetPosition(hMusic, 0x6 | (0 << 8), Bass.BASS_POS_MUSIC_ORDER);
             Bass.INSTANCE.BASS_ChannelPlay(hMusic, false);
-
-
             MasterRenderer.musicFlag = true;
         }
         List<Brick> bricks = world.getBricks();
+        List<AnimationRender> anims = AnimationRender.getListAnimationRender();
+        List<PowerUp> powers = world.getPowers();
         Ball ball = world.getBalls();
         Paddle paddle = world.getPaddle();
         renderer.beginRender();
         renderer.render(0, 0, 800, 800, textureManager.getTexture("CHALLENGE_CHAOS_BG"));
         for (Brick brick : bricks) {
-            renderer.render(brick, textureManager.getTexture("BRICK_1"));
+            if(brick.getFlag() >= 1 && brick.getFlag() <= 6){
+                String texture = String.format("BRICK_%d", brick.getFlag());
+                renderer.render(brick, textureManager.getTexture(texture));
+            }
+
         }
+        for(PowerUp power : powers) {
+            if(!power.getStatus()) continue;
+            if(!power.isPickedUp()) {
+                if(power.getType() == PowerUp.PowerUpType.FAST_BALL){
+                    renderer.render(power, textureManager.getTexture("BOOST_SPEED"));
+                }
+                else if(power.getType() == PowerUp.PowerUpType.EXPAND_PADDLE) {
+                    renderer.render(power, textureManager.getTexture("BOOST_PADDLE"));
+                }
 
-        renderer.render(ball, textureManager.getTexture("BALL_1"));
-
-
+            }
+        }
+        renderer.renderCircle(ball, textureManager.getTexture("BALL_1"));
         renderer.render(paddle, textureManager.getTexture("PADDLE_NORMAL"));
+
+
+
+
+
+        Iterator<AnimationRender> it = anims.iterator();
+        while (it.hasNext()) {
+            AnimationRender currentAnim = it.next();
+            if (currentAnim.isFinished()) {
+                it.remove();
+            } else {
+                currentAnim.renderAnimation(renderer);
+            }
+        }
         // TODO: Vẽ paddle, ball, bricks từ world
         // Lấy texture từ một TextureManager tập trung (nếu có)
         renderer.endRender();
@@ -96,21 +127,31 @@ public class MasterRenderer {
 
     public void renderHUD(GameManager gameManager) {
         int score = gameManager.getScore();
-        String scoreString = "Score: " + Integer.toString(score);
+        String scoreString = String.format("Score: %d", score);
         currentScore.setContent(scoreString);
 
         int heart = gameManager.getLives();
-        String heartString = "Heart: " + Integer.toString(heart);
+        String heartString = String.format("Heart: %d", heart);
         currentHeart.setContent(heartString);
 
         int level = gameManager.getCurrentLevel();
-        String levelString = "Level " + Integer.toString(level);
+        String levelString = String.format("Level %d", level);
         currentLevel.setContent(levelString);
+
+        if (timeChangeColor++ > 100) {
+            currentLevel.setColor((float) Math.random(),
+                (float) Math.random(),
+                (float) Math.random(),
+                1f);
+            timeChangeColor = 0;
+        }
 
         renderer.beginRender();
         renderer.render(font.getBitmapFont(), currentScore);
         renderer.render(font.getBitmapFont(), currentHeart);
+        renderer.setColor(currentLevel.getColor());
         renderer.render(font.getBitmapFont(), currentLevel);
+        renderer.setColor(Color.WHITE);
         renderer.endRender();
     }
 
