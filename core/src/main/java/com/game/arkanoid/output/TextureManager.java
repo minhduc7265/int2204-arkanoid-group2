@@ -3,7 +3,6 @@ package com.game.arkanoid.output;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,13 +86,23 @@ public class TextureManager {
         loadTextures("BRICK_1", "textures/brick_1.png");
         loadTextures("BRICK_2", "textures/brick_2.png");
         loadTextures("BRICK_3", "textures/brick_3.png");
+        loadTextures("BRICK_4", "textures/brick_4.png");
+        loadTextures("BRICK_5", "textures/brick_5.png");
+        loadTextures("BRICK_6", "textures/brick_6.png");
+
+        loadTextures("BOOST_PADDLE","textures/boost_paddle.png");
+        loadTextures("BOOST_SPEED","textures/boost_speed.png");
+        loadTextures("BOOST_HEART","textures/boost_heart.png");
+
         loadTextures("BALL_1", "textures/ball_1.png");
         loadTextures("BALL_2", "textures/ball_2.png");
         loadTextures("BALL_3", "textures/ball_3.png");
+
+
         loadTextures("PADDLE_NORMAL", "textures/paddle.png");
         loadTextures("CHALLENGE_CHAOS_BG", "images/challenge_chaos_bg.png");
 
-
         loadTextures("CLOUD_SHEET","spritesheet/cloud.png");
+        loadTextures("FIRE_SHEET", "spritesheet/fire.png");
     }
 }

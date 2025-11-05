@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Json;
 import com.game.arkanoid.leveldata.BrickInformation;
 import com.game.arkanoid.leveldata.LevelInfo;
 import com.game.arkanoid.model.Brick;
+import com.game.arkanoid.model.BrickFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,8 +26,7 @@ public class LevelLoader {
                 Iterator<BrickInformation> brick = levelInfo.brick.iterator();
                 while (brick.hasNext()) {
                     BrickInformation temp = brick.next();
-                    Brick brick_temp = new Brick(temp.ox,temp.oy,80,32,"");
-                    brick_temp.setFlag(temp.power);
+                    Brick brick_temp = BrickFactory.call(temp.power,temp.item, temp.ox, temp.oy,80,32);
                     newBricks.add(brick_temp);
                     System.out.println("+1");
                 }

@@ -3,7 +3,6 @@ package com.game.arkanoid.output;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,6 +80,9 @@ public class SoundManager {
     public void loadListSound() {
         loadSound("HIT","sound/hit.ogg");
         loadSound("BOMB", "sound/bomb.ogg");
+        loadSound("APPLY_EFFECT", "sound/apply_effect.ogg");
+        loadSound("BALL_BREAK", "sound/ball_break.ogg");
+
 
 
     }

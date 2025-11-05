@@ -37,6 +37,7 @@ public class Main extends Game {
         config.setForegroundFPS(GAME_FPS);
         config.setResizable(false);
         // Khởi chạy chính lớp Main, không phải GameManager nữa
+
         new Lwjgl3Application(new Main(), config);
     }
 }

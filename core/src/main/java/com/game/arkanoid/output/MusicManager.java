@@ -3,7 +3,6 @@ package com.game.arkanoid.output;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-
 import java.util.HashMap;
 import java.util.Map;
 

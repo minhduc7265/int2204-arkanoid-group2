@@ -1,6 +1,4 @@
 package com.game.arkanoid.output;
-
-
 import com.badlogic.gdx.graphics.Color;
 
 public class TextObject {
