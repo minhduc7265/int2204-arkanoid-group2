@@ -51,13 +51,16 @@ public class PowerUpManager {
     /**
      * Update all Power-Ups (called in game loop).
      */
-    public void updateAll() {
+    public void updateAll(Paddle paddle, Ball ball) {
         Iterator<PowerUp> iterator = activePowerUps.iterator();
         while (iterator.hasNext()) {
             PowerUp powerUp = iterator.next();
             powerUp.update();
             // If the effect expires, remove it from the list
             if (!powerUp.getStatus()) {
+                if(powerUp.isPickedUp()) {
+                    powerUp.removeEffect(paddle, ball);
+                }
                 iterator.remove();
             }
         }
