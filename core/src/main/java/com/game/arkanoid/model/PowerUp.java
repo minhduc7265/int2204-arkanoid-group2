@@ -9,7 +9,8 @@ import com.game.arkanoid.model.PowerUp.PowerUpType;
 public class PowerUp extends GameObject {
      public enum PowerUpType {
         EXPAND_PADDLE,
-        FAST_BALL
+        FAST_BALL,
+        ADD_LIFE
     }
 
     private final PowerUpType type;

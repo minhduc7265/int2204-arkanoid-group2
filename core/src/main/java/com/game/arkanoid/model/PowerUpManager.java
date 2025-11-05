@@ -41,6 +41,9 @@ public class PowerUpManager {
             case 2:
                 newPowerUp = new FastBallPowerUp(x, y);
                 break;
+            case 3: 
+                newPowerUp = new LifePowerUp(x, y);
+                break;
         }
 
         if (newPowerUp != null) {
