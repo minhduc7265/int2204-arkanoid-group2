@@ -57,7 +57,7 @@ public class GameWorld {
     public void update(float delta) {
         paddle.updateUseMouse(getMouseX());
         powerUpManager.checkCollisionsAndApplyEffects(paddle, ball);
-        powerUpManager.updateAll();
+        powerUpManager.updateAll(paddle, ball);
 
         if (!ball.getStatus()) ball = null;
 
