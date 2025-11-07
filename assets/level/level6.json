@@ -1,188 +1,78 @@
 {
-  "level": 1,
-
+  "level": 6,
   "brick": [
-    {
-      "ox": 0,
-      "oy": 600,
-      "power": 1,
-      "item" : 1
-    },
-    {
-      "ox": 80,
-      "oy": 600,
-      "power": 2,
-      "item": 1
-    },
-    {
-      "ox": 160,
-      "oy": 600,
-      "power": 3,
-      "item": 1
-    },
-    {
-      "ox": 240,
-      "oy": 600,
-      "power": 4,
-      "item": 1
-    },
-    {
-      "ox": 320,
-      "oy": 600,
-      "power": 5,
-      "item": 2
-    },
-    {
-      "ox": 400,
-      "oy": 600,
-      "power": 6,
-      "item": 0
-    },
-    {
-      "ox": 480,
-      "oy": 600,
-      "power": 3,
-      "item": 0
-    },
-    {
-      "ox": 560,
-      "oy": 600,
-      "power": 1,
-      "item": 0
-    },
-    {
-      "ox": 640,
-      "oy": 600,
-      "power": 1,
-      "item": 0
-    },
-    {
-      "ox": 720,
-      "oy": 600,
-      "power": 4,
-      "item": 0
-    },
-    {
-      "ox": 0,
-      "oy": 632,
-      "power": 1,
-      "item": 0
-    },
-    {
-      "ox": 80,
-      "oy": 632,
-      "power": 2,
-      "item": 0
-    },
-    {
-      "ox": 160,
-      "oy": 632,
-      "power": 1,
-      "item": 0
-    },
-    {
-      "ox": 240,
-      "oy": 632,
-      "power": 4,
-      "item": 0
-    },
-    {
-      "ox": 320,
-      "oy": 632,
-      "power": 1,
-      "item": 0
-    },
-    {
-      "ox": 400,
-      "oy": 632,
-      "power": 1,
-      "item": 0
-    },
-    {
-      "ox": 480,
-      "oy": 632,
-      "power": 3,
-      "item": 0
-    },
-    {
-      "ox": 560,
-      "oy": 632,
-      "power": 1,
-      "item": 0
-    },
-    {
-      "ox": 640,
-      "oy": 632,
-      "power": 1,
-      "item": 0
-    },
-    {
-      "ox": 720,
-      "oy": 632,
-      "power": 4,
-      "item": 0
-    },
-    {
-      "ox": 0,
-      "oy": 664,
-      "power": 1,
-      "item": 0
-    },
-    {
-      "ox": 80,
-      "oy": 664,
-      "power": 2,
-      "item": 0
-    },
-    {
-      "ox": 160,
-      "oy": 664,
-      "power": 1,
-      "item": 0
-    },
-    {
-      "ox": 240,
-      "oy": 664,
-      "power": 3,
-      "item": 1
-    },
-    {
-      "ox": 320,
-      "oy": 664,
-      "power": 1,
-      "item": 1
-    },
-    {
-      "ox": 400,
-      "oy": 664,
-      "power": 1,
-      "item": 0
-    },
-    {
-      "ox": 480,
-      "oy": 664,
-      "power": 3,
-      "item": 1
-    },
-    {
-      "ox": 560,
-      "oy": 664,
-      "power": 1,
-      "item": 2
-    },
-    {
-      "ox": 640,
-      "oy": 664,
-      "power": 1,
-      "item": 2
-    },
-    {
-      "ox": 720,
-      "oy": 664,
-      "power": 4,
-      "item": 0
-    }
+    // Khối trên
+    // Hàng 1 (oy = 664) - Power 5 (Bạc)
+    { "ox": 0,   "oy": 664, "power": 5 },
+    { "ox": 80,  "oy": 664, "power": 5 },
+    { "ox": 160, "oy": 664, "power": 5 },
+    { "ox": 240, "oy": 664, "power": 5 },
+    { "ox": 320, "oy": 664, "power": 5, "item": 5 },
+    { "ox": 400, "oy": 664, "power": 5 },
+    { "ox": 480, "oy": 664, "power": 5 },
+    { "ox": 560, "oy": 664, "power": 5 },
+    { "ox": 640, "oy": 664, "power": 5 },
+    { "ox": 720, "oy": 664, "power": 5, "item": 2 },
 
+    // Hàng 2 (oy = 632) - Power 3 (Cam)
+    { "ox": 0,   "oy": 632, "power": 3 },
+    { "ox": 80,  "oy": 632, "power": 3 },
+    { "ox": 160, "oy": 632, "power": 3 },
+    { "ox": 240, "oy": 632, "power": 3 },
+    { "ox": 320, "oy": 632, "power": 3, "item": 5 },
+    { "ox": 400, "oy": 632, "power": 3 },
+    { "ox": 480, "oy": 632, "power": 3 },
+    { "ox": 560, "oy": 632, "power": 3 },
+    { "ox": 640, "oy": 632, "power": 3 },
+    { "ox": 720, "oy": 632, "power": 3 },
 
+    // Hàng 3 (oy = 600) - Power 5 (Bạc)
+    { "ox": 0,   "oy": 600, "power": 5 },
+    { "ox": 80,  "oy": 600, "power": 5 },
+    { "ox": 160, "oy": 600, "power": 5 },
+    { "ox": 240, "oy": 600, "power": 5 },
+    { "ox": 320, "oy": 600, "power": 5, "item": 1 },
+    { "ox": 400, "oy": 600, "power": 5 },
+    { "ox": 480, "oy": 600, "power": 5 },
+    { "ox": 560, "oy": 600, "power": 5, "item": 5 },
+    { "ox": 640, "oy": 600, "power": 5 },
+    { "ox": 720, "oy": 600, "power": 5, "item": 1 },
+
+    // Khối dưới (Cách một hàng)
+    // Hàng 5 (oy = 536) - Power 5 (Bạc)
+    { "ox": 0,   "oy": 536, "power": 5, "item": 2 },
+    { "ox": 80,  "oy": 536, "power": 5 },
+    { "ox": 160, "oy": 536, "power": 5 },
+    { "ox": 240, "oy": 536, "power": 5 },
+    { "ox": 320, "oy": 536, "power": 5, "item": 2 },
+    { "ox": 400, "oy": 536, "power": 5 },
+    { "ox": 480, "oy": 536, "power": 5 },
+    { "ox": 560, "oy": 536, "power": 5, "item": 6 },
+    { "ox": 640, "oy": 536, "power": 5 },
+    { "ox": 720, "oy": 536, "power": 5 },
+
+    // Hàng 6 (oy = 504) - Power 4 (Đỏ)
+    { "ox": 0,   "oy": 504, "power": 4 },
+    { "ox": 80,  "oy": 504, "power": 4, "item": 4 },
+    { "ox": 160, "oy": 504, "power": 4 },
+    { "ox": 240, "oy": 504, "power": 4 },
+    { "ox": 320, "oy": 504, "power": 4, "item": 2 },
+    { "ox": 400, "oy": 504, "power": 4 },
+    { "ox": 480, "oy": 504, "power": 4 },
+    { "ox": 560, "oy": 504, "power": 4 },
+    { "ox": 640, "oy": 504, "power": 4, "item": 2 },
+    { "ox": 720, "oy": 504, "power": 4 },
+
+    // Hàng 7 (oy = 472) - Power 5 (Bạc)
+    { "ox": 0,   "oy": 472, "power": 6 },
+    { "ox": 80,  "oy": 472, "power": 6 },
+    { "ox": 160, "oy": 472, "power": 6 },
+    { "ox": 240, "oy": 472, "power": 6 },
+    { "ox": 320, "oy": 472, "power": 6 },
+    { "ox": 400, "oy": 472, "power": 6 },
+    { "ox": 480, "oy": 472, "power": 6 },
+    { "ox": 560, "oy": 472, "power": 6 },
+    { "ox": 640, "oy": 472, "power": 6 },
+    { "ox": 720, "oy": 472, "power": 5, "item": 1 }
   ]
 }
