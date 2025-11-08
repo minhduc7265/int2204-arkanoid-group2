@@ -7,6 +7,7 @@ import com.game.arkanoid.Main;
 import com.game.arkanoid.engine.GameManager;
 import com.game.arkanoid.output.Bass;
 import com.game.arkanoid.output.MasterRenderer;
+import com.game.arkanoid.output.MusicManager;
 import com.game.arkanoid.world.GameWorld;
 
 public class GameScreen implements Screen {
@@ -20,25 +21,34 @@ public class GameScreen implements Screen {
         this.gameManager = GameManager.getGameManager();
     }
 
+
     @Override
     public void render(float delta) {
-        // Xử lý input Pause
+        handleInputPause();
+        updateLogicGame(delta);
+        renderGame();
+    }
+
+
+    private void handleInputPause() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             if (gameManager.isPaused()) {
                 gameManager.setGameState(GameManager.GameState.RUNNING);
-                Bass.INSTANCE.BASS_ChannelPlay(MasterRenderer.hMusic, false);
+                MusicManager.getInstance().BASS_playMusic();
             } else {
                 gameManager.setGameState(GameManager.GameState.PAUSED);
-                Bass.INSTANCE.BASS_ChannelPause(MasterRenderer.hMusic);
+                MusicManager.getInstance().BASS_pauseMusic();
             }
         }
+    }
 
-        // Chỉ cập nhật logic nếu game không bị pause
+    private void updateLogicGame(float delta) {
         if (!gameManager.isPaused()) {
             world.update(delta);
         }
+    }
 
-        // Giao việc vẽ cho MasterRenderer
+    private void renderGame() {
         game.getMasterRenderer().clearScreen();
         game.getMasterRenderer().renderGameWorld(world);
         game.getMasterRenderer().renderHUD(gameManager);
@@ -49,10 +59,27 @@ public class GameScreen implements Screen {
     }
 
     // ... các hàm còn lại của Screen (show, hide, dispose...)
-    @Override public void show() {}
-    @Override public void resize(int width, int height) {}
-    @Override public void pause() {}
-    @Override public void resume() {}
-    @Override public void hide() {}
-    @Override public void dispose() {}
+    @Override
+    public void show() {
+    }
+
+    @Override
+    public void resize(int width, int height) {
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void hide() {
+    }
+
+    @Override
+    public void dispose() {
+    }
 }

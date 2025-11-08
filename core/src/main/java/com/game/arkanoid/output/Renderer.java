@@ -45,8 +45,20 @@ public class Renderer {
         renderer.draw(texture, obj.getXPos(), obj.getYPos(), obj.getWidth(), obj.getHeight());
     }
 
+    public void renderIncludeColor(GameObject obj, Texture texture) {
+        setColor(obj.getColor());
+        renderer.draw(texture, obj.getXPos(), obj.getYPos(), obj.getWidth(), obj.getHeight());
+        setColor(Color.WHITE);
+    }
+
     public void renderCircle(GameObject obj, Texture texture) {
         renderer.draw(texture, obj.getXPos() - obj.getWidth() / 2f, obj.getYPos() - obj.getHeight() / 2f);
+    }
+
+    public void renderCircleIncludeColor(GameObject obj, Texture texture) {
+        setColor(obj.getColor());
+        renderer.draw(texture, obj.getXPos() - obj.getWidth() / 2f, obj.getYPos() - obj.getHeight() / 2f);
+        setColor(Color.WHITE);
     }
 
 
@@ -66,8 +78,8 @@ public class Renderer {
     }
 
 
-    public void render(float ox, float oy, TextureRegion texture) {
-        renderer.draw(texture, ox, oy);
+    public void render(float ox, float oy, TextureRegion texture, AnimationSpriteSheet animationSpriteSheet) {
+        renderer.draw(texture, ox, oy, animationSpriteSheet.getWidth(), animationSpriteSheet.getHeight());
     }
 
     public void setColor(Color color) {
@@ -88,6 +100,7 @@ public class Renderer {
     public void render(BitmapFont font, TextObject text) {
         font.setColor(text.getColor());
         font.draw(renderer, text.getContent(), text.getX(), text.getY());
+        font.setColor(Color.WHITE);
     }
 
     /**

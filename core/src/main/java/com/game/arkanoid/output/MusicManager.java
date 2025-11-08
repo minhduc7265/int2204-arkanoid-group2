@@ -1,122 +1,85 @@
 package com.game.arkanoid.output;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import java.util.HashMap;
-import java.util.Map;
+import com.sun.jna.Native;
 
 //MusicManager is a Singleton
 public class MusicManager {
     private static MusicManager musicManager;
 
-    private final Map<String, Music> listMusics;
+    private boolean mFlag;
 
+    private long hMusic;
+
+    private Bass bassInstance;
 
     private MusicManager() {
-        listMusics = new HashMap<>();
+        this.mFlag = false;
+        this.bassInstance = Native.load(Gdx.files.internal("dll/bass.dll").path(), Bass.class);
     }
 
-    /**
-     * Load Music.<br>
-     * Throw exception when path is invalid or load fail.
-     *
-     * @param name is nameMusic
-     * @param path is Path
-     */
-    public void loadMusic(String name, String path) {
-        if (listMusics.containsKey(name)) {
-            System.out.println(name + " is already exist.");
-            return;
-        }
-        try {
-            Music newMusic;
-            newMusic = Gdx.audio.newMusic(Gdx.files.internal(path));
-            listMusics.put(name, newMusic);
-        } catch (GdxRuntimeException e) {
-            System.err.println(name + " Not found.");
-            return;
-        }
-    }
-
-    /**
-     * Get musicManager.
-     *
-     * @return musicManager
-     */
     public static MusicManager getInstance() {
         if (musicManager == null) {
             musicManager = new MusicManager();
+            musicManager.initBass();
+            //Khi build dùng nó
+            //String filePath = "sound/mainmusic.mo3";
+            String filePath = "assets/sound/mainmusic.mo3";
+            musicManager.hMusic = musicManager.bassInstance.BASS_MusicLoad(false, filePath, 0, 0, 0, 0);
+            if (musicManager.hMusic == 0) {
+                System.err.println("Unable to load music file: " + filePath);
+            }
         }
         return musicManager;
     }
 
-    /**
-     * Play Music function.<br>
-     * If name is invalid then print an error.
-     *
-     * @param name   is nameMusic
-     * @param isLoop true or false
-     */
-    public void playMusic(String name, boolean isLoop) {
-        Music music = listMusics.get(name);
-        if (music == null) {
-            System.err.println(name + " does not exist.");
-            System.err.println("Play fail.");
-            return;
-        }
-        music.play();
-        music.setLooping(isLoop);
-    }
-
-    /**
-     * setVolume function.<br>
-     * If name is invalid or volume is out of range then print an error.
-     *
-     * @param name   is nameMusic
-     * @param volume is volume value you want to set
-     */
-    public void setVolume(String name, float volume) {
-        Music music = listMusics.get(name);
-        if (music == null) {
-            System.err.println(name + " does not exist.");
-            System.err.println("Play fail.");
-            return;
-        }
-        if (volume < 0 || volume > 1) {
-            System.err.println("Out of range value.");
-            return;
-        }
-
-        music.setVolume(volume);
-    }
-
-    public void pauseMusic(String name) {
-        Music music = listMusics.get(name);
-        if (music == null) {
-            System.err.println(name + " does not exist.");
-            System.err.println("Pause fail.");
-            return;
-        }
-        music.pause();
-    }
-
-    public void stopMusic(String name) {
-        Music music = listMusics.get(name);
-        if (music == null) {
-            System.err.println(name + " does not exist.");
-            System.err.println("Stop fail.");
-            return;
-        }
-        music.stop();
-    }
 
     public void dispose() {
-        for (Music music : listMusics.values()) {
-            music.dispose();
-        }
-        listMusics.clear();
+        this.bassInstance.BASS_MusicFree(this.hMusic);
+        this.bassInstance.BASS_Free();
+    }
+
+    public boolean BASS_setPattern(int pattern) {
+        return this.bassInstance.BASS_ChannelSetPosition(hMusic, pattern, Bass.BASS_POS_MUSIC_ORDER);
+    }
+
+    public boolean BASS_playMusic(){
+        return this.bassInstance.BASS_ChannelPlay(hMusic, false);
     }
 
 
+    public boolean BASS_pauseMusic() {
+        return this.bassInstance.BASS_ChannelPause(hMusic);
+    }
+
+    public boolean BASS_stopMusic() {
+        return this.bassInstance.BASS_ChannelStop(hMusic);
+    }
+
+
+
+
+    public void initBass() {
+        System.out.println("Trying to initialize BASS using JNA...");
+        System.out.println(System.getProperty("java.library.path"));
+        boolean isInitialized = this.bassInstance.BASS_Init(Bass.BASS_DEVICE_DEFAULT, 44100, 0, 0, 0);
+        if (!isInitialized) {
+            System.err.println("BASS initialization failed!");
+            return;
+        }
+        System.out.println("BASS initialized successfully!");
+    }
+
+
+    public long getHandleMusic() {
+        return this.hMusic;
+    }
+
+    public boolean getmFlag() {
+        return this.mFlag;
+    }
+
+    public void setmFlag(boolean mFlag) {
+        this.mFlag = mFlag;
+    }
 }

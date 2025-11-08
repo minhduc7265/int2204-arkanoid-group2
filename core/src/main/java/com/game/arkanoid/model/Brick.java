@@ -1,14 +1,17 @@
 package com.game.arkanoid.model;
 
+
 public class Brick extends GameObject {
     private int flag;
     private int item;
+    private int blood;
 
 
-    public Brick(float x, float y, int w, int h, String textureID, int flag, int item) {
-        super(x, y, w, h, textureID);
+    public Brick(float x, float y, int w, int h, int flag, int item, int blood) {
+        super(x, y, w, h);
         this.flag = flag;
         this.item = item;
+        this.blood = blood;
 
     }
 
@@ -27,5 +30,21 @@ public class Brick extends GameObject {
 
     public void setItem(int item) {
         this.item = item;
+    }
+
+    public int getBlood() {
+        return blood;
+    }
+
+    public void setBlood(int blood) {
+        this.blood = blood;
+    }
+
+    public String getTexture() {
+        switch (flag) {
+            case 1,2,3,4,6 -> {return String.format("BRICK_%d", flag);}
+            case 5 -> {return (this.blood == 2 ? "BRICK_5" : "BRICK_5_BREAK");}
+            default -> {System.err.println("Texture không hợp lệ"); return "DEFAULT_TEXTURE";}
+        }
     }
 }

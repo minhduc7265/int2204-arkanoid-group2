@@ -1,5 +1,4 @@
 package com.game.arkanoid.output;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -30,7 +29,6 @@ public class MasterRenderer {
 
     public static boolean musicFlag;
 
-
     public int timeChangeColor;
 
 
@@ -41,8 +39,7 @@ public class MasterRenderer {
         GameObject.setScreenHeight(800);
         textureManager = TextureManager.getInstance();
         soundManager = SoundManager.getInstance();
-
-        loadBass();
+        MusicManager.getInstance();
         AnimationSpriteSheet.loadAnim();
 
 
@@ -52,6 +49,8 @@ public class MasterRenderer {
         currentScore = new TextObject("", 50f, 764f);
         currentHeart = new TextObject("", 50f, 728f);
         currentLevel = new TextObject("", 0f, 24f);
+
+        GameManager.getGameManager().readData();
     }
 
     public void clearScreen() {
@@ -59,99 +58,41 @@ public class MasterRenderer {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
+
+
     public void renderMainMenu(Texture background, Stage stage) {
-        if (MasterRenderer.musicFlag != true) {
-            Bass.INSTANCE.BASS_ChannelSetPosition(hMusic, 0xC | (0 << 8), Bass.BASS_POS_MUSIC_ORDER);
-            Bass.INSTANCE.BASS_ChannelPlay(hMusic, false);
-            MasterRenderer.musicFlag = true;
-        }
-        renderer.beginRender();
-        renderer.render(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), background);
-        renderer.endRender();
-        stage.act(Gdx.graphics.getDeltaTime());
-        stage.draw();
+        playMainMenuMusic();
+        drawBackground(background);
+        drawStage(stage);
     }
+
+
+
 
     public void renderGameWorld(GameWorld world) {
-        if (MasterRenderer.musicFlag != true) {
-            Bass.INSTANCE.BASS_ChannelSetPosition(hMusic, 0x6 | (0 << 8), Bass.BASS_POS_MUSIC_ORDER);
-            Bass.INSTANCE.BASS_ChannelPlay(hMusic, false);
-            MasterRenderer.musicFlag = true;
-        }
-        List<Brick> bricks = world.getBricks();
-        List<AnimationRender> anims = AnimationRender.getListAnimationRender();
-        List<PowerUp> powers = world.getPowers();
-        Ball ball = world.getBalls();
-        Paddle paddle = world.getPaddle();
+        playGameWorldMusic();
         renderer.beginRender();
-        renderer.render(0, 0, 800, 800, textureManager.getTexture("CHALLENGE_CHAOS_BG"));
-        for (Brick brick : bricks) {
-            if(brick.getFlag() >= 1 && brick.getFlag() <= 6){
-                String texture = String.format("BRICK_%d", brick.getFlag());
-                renderer.render(brick, textureManager.getTexture(texture));
-            }
-
-        }
-        for(PowerUp power : powers) {
-            if(!power.getStatus()) continue;
-            if(!power.isPickedUp()) {
-                if(power.getType() == PowerUp.PowerUpType.FAST_BALL){
-                    renderer.render(power, textureManager.getTexture("BOOST_SPEED"));
-                }
-                else if(power.getType() == PowerUp.PowerUpType.EXPAND_PADDLE) {
-                    renderer.render(power, textureManager.getTexture("BOOST_PADDLE"));
-                }
-
-            }
-        }
-        renderer.renderCircle(ball, textureManager.getTexture("BALL_1"));
-        renderer.render(paddle, textureManager.getTexture("PADDLE_NORMAL"));
-
-
-
-
-
-        Iterator<AnimationRender> it = anims.iterator();
-        while (it.hasNext()) {
-            AnimationRender currentAnim = it.next();
-            if (currentAnim.isFinished()) {
-                it.remove();
-            } else {
-                currentAnim.renderAnimation(renderer);
-            }
-        }
-        // TODO: Vẽ paddle, ball, bricks từ world
-        // Lấy texture từ một TextureManager tập trung (nếu có)
+        renderBackgound();
+        renderBrick(world);
+        renderItem(world);
+        renderAnimation();
+        renderBall(world);
+        renderPaddle(world);
         renderer.endRender();
     }
 
+
+
+
     public void renderHUD(GameManager gameManager) {
-        int score = gameManager.getScore();
-        String scoreString = String.format("Score: %d", score);
-        currentScore.setContent(scoreString);
-
-        int heart = gameManager.getLives();
-        String heartString = String.format("Heart: %d", heart);
-        currentHeart.setContent(heartString);
-
-        int level = gameManager.getCurrentLevel();
-        String levelString = String.format("Level %d", level);
-        currentLevel.setContent(levelString);
-
-        if (timeChangeColor++ > 100) {
-            currentLevel.setColor((float) Math.random(),
-                (float) Math.random(),
-                (float) Math.random(),
-                1f);
-            timeChangeColor = 0;
-        }
-
+        setScoreString(gameManager);
+        setHeartString(gameManager);
+        setLevelString(gameManager);
+        //Render Text
         renderer.beginRender();
         renderer.render(font.getBitmapFont(), currentScore);
         renderer.render(font.getBitmapFont(), currentHeart);
-        renderer.setColor(currentLevel.getColor());
         renderer.render(font.getBitmapFont(), currentLevel);
-        renderer.setColor(Color.WHITE);
         renderer.endRender();
     }
 
@@ -162,7 +103,7 @@ public class MasterRenderer {
     }
 
     public void renderHighScore(GameManager gameManager) {
-        int score = gameManager.getScore();
+        int score = gameManager.getHighScore();
         String scoreString = "High Score: " + Integer.toString(score);
         highScore.setContent(scoreString);
 
@@ -175,31 +116,114 @@ public class MasterRenderer {
         font.dispose();
         renderer.dispose();
         textureManager.dispose();
+        soundManager.dispose();
+        MusicManager.getInstance().dispose();
         // font.dispose();
-
-
-        Bass.INSTANCE.BASS_MusicFree(hMusic);
-        Bass.INSTANCE.BASS_Free();
     }
 
 
-    public void loadBass() {
-        System.out.println("Trying to initialize BASS using JNA...");
-        System.out.println(System.getProperty("java.library.path"));
-        boolean isInitialized = Bass.INSTANCE.BASS_Init(Bass.BASS_DEVICE_DEFAULT, 44100, 0, 0, 0);
-        if (!isInitialized) {
-            System.err.println("BASS initialization failed!");
-            return;
-        }
-        System.out.println("BASS initialized successfully!");
-        //Khi build dùng nó
-        //String filePath = "sound/mainmusic.mo3";
-        String filePath = "assets/sound/mainmusic.mo3";
-        hMusic = Bass.INSTANCE.BASS_MusicLoad(false, filePath, 0, 0, 0, 0);
-        if (hMusic == 0) {
-            System.err.println("Unable to load music file: " + filePath);
-            Bass.INSTANCE.BASS_Free();
-            return;
+    private void setScoreString(GameManager gameManager) {
+        int score = gameManager.getScore();
+        String scoreString = String.format("Score: %d", score);
+        currentScore.setContent(scoreString);
+    }
+
+    private void setHeartString(GameManager gameManager){
+        int heart = gameManager.getLives();
+        String heartString = String.format("Heart: %d", heart);
+        currentHeart.setContent(heartString);
+    }
+    private void setLevelString(GameManager gameManager){
+        int level = gameManager.getCurrentLevel();
+        String levelString = String.format("Level %d", level);
+        currentLevel.setContent(levelString);
+
+        if (timeChangeColor++ > 100) {
+            currentLevel.setColor((float) Math.random(),
+                (float) Math.random(),
+                (float) Math.random(),
+                1f);
+            timeChangeColor = 0;
         }
     }
+
+    private void playGameWorldMusic() {
+        if(MusicManager.getInstance().getmFlag() != true) {
+            MusicManager.getInstance().BASS_setPattern(0x6 | (0 << 8));
+            MusicManager.getInstance().BASS_playMusic();
+            MusicManager.getInstance().setmFlag(true);
+        }
+    }
+
+    private void renderBrick(GameWorld world) {
+        List<Brick> bricks = world.getBricks();
+        for (Brick brick : bricks) {
+            renderer.render(brick, textureManager.getTexture(brick.getTexture()));
+        }
+    }
+
+    private void renderItem(GameWorld world) {
+        List<Item> powers = world.getPowers();
+        for(Item power : powers) {
+            if(!power.getStatus()) continue;
+            if(!power.isPickedUp()) {
+                renderer.render(power, textureManager.getTexture(power.getTexture()));
+            }
+        }
+    }
+
+    private void renderAnimation(){
+        List<AnimationRender> anims = AnimationRender.getListAnimationRender();
+        Iterator<AnimationRender> it = anims.iterator();
+        while (it.hasNext()) {
+            AnimationRender currentAnim = it.next();
+            if (currentAnim.isFinished()) {
+                it.remove();
+            } else {
+                currentAnim.renderAnimation(renderer);
+            }
+        }
+    }
+
+    private void renderBall(GameWorld world) {
+        Ball ball = world.getBalls();
+        if(ball.getFlag() == 0) {
+            renderer.renderCircleIncludeColor(ball, textureManager.getTexture("BALL_1"));
+        }
+        else{
+            renderer.renderCircleIncludeColor(ball, textureManager.getTexture("BALL_2"));
+        }
+
+    }
+
+    private void renderPaddle(GameWorld world) {
+        Paddle paddle = world.getPaddle();
+        renderer.render(paddle, textureManager.getTexture("PADDLE_NORMAL"));
+    }
+
+    private void renderBackgound() {
+        renderer.render(0, 0, 800, 800, textureManager.getTexture("CHALLENGE_CHAOS_BG"));
+    }
+
+    private void playMainMenuMusic() {
+        if(MusicManager.getInstance().getmFlag() != true) {
+            MusicManager.getInstance().BASS_setPattern(0xC | (0 << 8));
+            MusicManager.getInstance().BASS_playMusic();
+            MusicManager.getInstance().setmFlag(true);
+        }
+    }
+
+    private void drawBackground(Texture background) {
+        renderer.beginRender();
+        renderer.render(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), background);
+        renderer.endRender();
+    }
+
+    private void drawStage(Stage stage) {
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
+    }
+
+
+
 }
