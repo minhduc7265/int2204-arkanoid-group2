@@ -62,12 +62,18 @@ public class AnimationSpriteSheet {
             new AnimationSpriteSheet(TextureManager.getInstance().getTexture("CLOUD_SHEET"),
                 14,
                 1, 180f, 228f));
-
         listAnimation.put("FIRE_ANIM",
             new AnimationSpriteSheet(TextureManager.getInstance().getTexture("FIRE_SHEET"),
                 25,
-                1, 491f, 602f));
-
+                1, 245f, 301f));
+        listAnimation.put("GAS_ANIM",
+            new AnimationSpriteSheet(TextureManager.getInstance().getTexture("GAS_SHEET"),
+                7,
+                7, 231f, 190f));
+        listAnimation.put("BREAK_ANIM",
+            new AnimationSpriteSheet(TextureManager.getInstance().getTexture("BREAK_SHEET"),
+                27,
+                1, 229f, 194f));
     }
 
 

@@ -22,7 +22,7 @@ public class Paddle extends MovableObject {
     private final int initialWidth;
 
     public Paddle(float x, float y, int width, int height) {
-        super(x, y, width, height, "PaddleTexture");
+        super(x, y, width, height);
         this.acceleration = 600f;
         this.initialWidth = width;
     }

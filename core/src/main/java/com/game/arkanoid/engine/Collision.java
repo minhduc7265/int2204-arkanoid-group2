@@ -1,7 +1,6 @@
 package com.game.arkanoid.engine;
 
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -111,7 +110,7 @@ public class Collision {
         int m = u + v;
 
         //Tạo đường di chuyển
-        //Kết quả sẽ là 1 đươờng thằng với điểm đầu và điểm cuối
+        //Kết quả sẽ là 1 đường thằng với điểm đầu và điểm cuối
         Segment seg = new Segment(new Point(c.x, c.y), new Point(c.x + d.x, c.y + d.y));
 
         //Lây kết quả sau

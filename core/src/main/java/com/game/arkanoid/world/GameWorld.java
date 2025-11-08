@@ -1,15 +1,16 @@
 package com.game.arkanoid.world;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.game.arkanoid.engine.Collision;
 import com.game.arkanoid.engine.GameManager;
 import com.game.arkanoid.model.*;
-import com.game.arkanoid.output.AnimationRender;
+import com.game.arkanoid.output.AnimationFactory;
+import com.game.arkanoid.output.Score;
 import com.game.arkanoid.output.SoundManager;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+
+import java.util.*;
 
 public class GameWorld {
     private GameManager gameManager;
@@ -17,88 +18,62 @@ public class GameWorld {
     private Ball ball;
     private List<Brick> bricks;
     private LevelLoader levelLoader;
-    private PowerUpManager powerUpManager;
+    private ItemManager itemManager;
+    private final Map<Integer, Integer> Score;
+    private boolean isPushBall;
+
+
+
+    private CollisionManager collisionManager;
 
     public GameWorld() {
+
         this.levelLoader = new LevelLoader();
         this.gameManager = GameManager.getGameManager();
-        this.gameManager.startNewGame();
-        this.powerUpManager = new PowerUpManager();
 
-        // TODO: Khởi tạo paddle, ball
+        this.gameManager.startNewGame();
+        this.itemManager = new ItemManager();
+        this.Score = new HashMap<>();
+        this.collisionManager = new CollisionManager(gameManager, Score);
+        this.isPushBall = false;
+        Score.put(1, 50);
+        Score.put(2, 60);
+        Score.put(3, 70);
+        Score.put(4, 90);
+        Score.put(5, 120);
+        Score.put(6, 0);
+
         paddle = new Paddle(0, 0, 122, 44);
         paddle.setyFinal(100f);
         ball = null;
         bricks = new ArrayList<>();
-        // paddle = new Paddle(...);
-        // ball = new Ball(...);
 
-        loadLevel(gameManager.getCurrentLevel());
+
+        initializeLevel(gameManager.getCurrentLevel());
     }
 
     public void resetBallPosition() {
-        ball = new Ball(200f, 200f, 20, 19, 400f);
+        isPushBall = false;
+        ball = new Ball(-100f, -100f, 20, 19, 500f);
     }
 
-    public void loadLevel(int level) {
+    public void initializeLevel(int level) {
         bricks = levelLoader.loadLevel(level);
-
-        // TODO: Load ball
-        ball = new Ball(700f, 700f, 20, 19, 400f);
-
-
-        powerUpManager = new PowerUpManager();
-
-        // TODO: Reset vị trí bóng và paddle
+        resetBallPosition();
+        itemManager = new ItemManager();
+        collisionManager.setItemManager(itemManager);
+        gameManager.writeData();
     }
 
 
 
+    //Main update
     public void update(float delta) {
-        paddle.updateUseMouse(getMouseX());
-        powerUpManager.checkCollisionsAndApplyEffects(paddle, ball);
-        powerUpManager.updateAll(paddle, ball);
-
-        if (!ball.getStatus()) ball = null;
-
-        Iterator<Brick> iteratorBrick = bricks.iterator();
-        while (iteratorBrick.hasNext()) {
-            Brick currentBrick = iteratorBrick.next();
-            if (!currentBrick.getStatus()) {
-                iteratorBrick.remove();
-            }
-        }
-        if (ball != null) {
-            checkCollision(ball, bricks);
-
-            ball.update(delta);
-
-            ball.handlePaddle(paddle);
-        }
-
-
-        if (bricks.isEmpty()) {
-            gameManager.goToNextLevel();
-            loadLevel(gameManager.getCurrentLevel());
-        }
-
-        if (ball == null) {
-            gameManager.loseLife();
-            resetBallPosition();
-        }
-
-
-        if(gameManager.getGameState() == GameManager.GameState.GAMEOVER) {
-            gameManager.startNewGame();
-            loadLevel(gameManager.getCurrentLevel());
-        }
-
-
-        // TODO: Xử lý input để di chuyển paddle
-        // TODO: Cập nhật vị trí paddle.update(delta) và ball.update(delta)
-        // TODO: Xử lý va chạm
-        // TODO: Nếu hết gạch -> gameManager.goToNextLevel(); loadLevel(...);
-        // TODO: Nếu bóng rơi -> gameManager.loseLife(); resetBallPosition(...);
+        handleInput();
+        updateEntities(delta);
+        //if (!ball.getStatus()) ball = null;
+        handleLevelProgression();
+        handleGameOver();
     }
 
     // Getter để MasterRenderer có thể lấy đối tượng để vẽ
@@ -110,6 +85,7 @@ public class GameWorld {
         return ball;
     }
 
+
     public List<Brick> getBricks() {
         return bricks;
     }
@@ -119,63 +95,85 @@ public class GameWorld {
     }
 
 
-    public List<PowerUp> getPowers() {return powerUpManager.getActivePowerUps(); }
+    public List<Item> getPowers() {
+        return itemManager.getActivePowerUps();
+    }
 
-    public void checkCollision(Ball ball, List<Brick> bricks) {
-        float delta = Gdx.graphics.getDeltaTime();
-        Vector2 vectorMove = new Vector2(ball.getVelocityX() * delta, ball.getVelocityY() * delta);
-        float[] timeInfo = new float[2];
-        float minT = Float.MAX_VALUE;
-        Brick hitBrick = null;
-        float[] bestInfo = new float[2];
+    private void handleInput() {
+        paddle.updateUseMouse(getMouseX());
+    }
 
-        for (Brick brick : bricks) {
-            if (!brick.getStatus()) continue;
+    private void updateEntities(float delta) {
+        handleBall(delta);
+        itemManager.checkCollisionsAndApplyEffects(paddle, ball);
+        itemManager.updateAll(paddle, ball);
+        checkBricks();
+        checkBall();
+    }
 
-            if (Collision.IntersectMovingSphereAABB(ball.getBoundCircle(), vectorMove, brick.getBounds(), timeInfo) == 1) {
-                if (timeInfo[0] < minT) {
-                    minT = timeInfo[0];
-                    hitBrick = brick;
-                    bestInfo[0] = timeInfo[0];
-                    bestInfo[1] = timeInfo[1];
-                }
+
+
+    private void checkBricks() {
+        Iterator<Brick> iteratorBrick = bricks.iterator();
+        while (iteratorBrick.hasNext()) {
+            Brick currentBrick = iteratorBrick.next();
+            if (currentBrick.getFlag() != 6 && currentBrick.getBlood() <= 0) {
+                currentBrick.setStatus(false);
+                itemManager.createPowerUpFromBrick(currentBrick);
+                gameManager.addScore(Score.get(currentBrick.getFlag()));
+            }
+            if (!currentBrick.getStatus()) {
+                iteratorBrick.remove();
             }
         }
+    }
 
-        if (hitBrick == null) return;
-
-        ball.setPosition(ball.getXPos() + bestInfo[0] * vectorMove.x,
-            ball.getYPos() + bestInfo[0] * vectorMove.y);
-
-        if ((int) bestInfo[1] == 1) {
-            ball.bounceX();
-            System.out.println("Va cạnh dọc");
-        } else if ((int) bestInfo[1] == 2) {
-            ball.bounceY();
-            System.out.println("Va cạnh ngang");
-        } else if ((int) bestInfo[1] == 3) {
-            ball.bounceY();
-            ball.bounceX();
-            System.out.println("Va vào đỉnh");
-        } else {
-            ball.bounceX();
-            ball.bounceY();
-            System.out.println(bestInfo[1]);
-            System.out.println("Tình trạng bóng vào trong viên gạch");
+    private boolean areAllBricksCleared() {
+        for (Brick brick : bricks) {
+            if (brick.getFlag() != 6 && brick.getStatus()) {
+                return false;
+            }
         }
-        hitBrick.setStatus(false);
+        return true;
 
-        powerUpManager.createPowerUpFromBrick(hitBrick);
+    }
 
+    private void handleBall(float delta) {
+        if (ball.getStatus()) {
+            if(isPushBall) {
+                collisionManager.checkCollision(ball, bricks);
+                ball.handlePaddle(paddle);
+                ball.update(delta);
+            }
+            else{
+                ball.setPosition(paddle.getXPos() + paddle.getWidth() / 2, paddle.getYPos() + paddle.getHeight() + 10);
+                if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                    isPushBall = true;
+                }
+            }
 
-        AnimationRender.getListAnimationRender().add(new AnimationRender("CLOUD_ANIM",
-            (int)hitBrick.getXPos() + hitBrick.getWidth() / 2,
-            (int)hitBrick.getYPos() + hitBrick.getHeight() / 2));
-        /*AnimationRender.getListAnimationRender().add(new AnimationRender("FIRE_ANIM",
-            (int)hitBrick.getXPos() + hitBrick.getWidth() / 2,
-            (int)hitBrick.getYPos() + hitBrick.getHeight() / 2));*/
+        }
+    }
 
-        SoundManager.getInstance().playSound("HIT");
+    private void handleLevelProgression() {
+        if (areAllBricksCleared()) {
+            gameManager.goToNextLevel();
+            initializeLevel(gameManager.getCurrentLevel());
+        }
+    }
+
+    private void checkBall() {
+        if (!ball.getStatus()) {
+            gameManager.loseLife();
+            resetBallPosition();
+        }
+    }
+
+    private void handleGameOver() {
+        if (gameManager.getGameState() == GameManager.GameState.GAMEOVER) {
+            gameManager.startNewGame();
+            initializeLevel(gameManager.getCurrentLevel());
+        }
     }
 
 

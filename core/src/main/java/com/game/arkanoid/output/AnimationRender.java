@@ -34,7 +34,7 @@ public class AnimationRender {
 
         TextureRegion currentframe = animation.getKeyFrame(stateTime);
         //renderer.beginRender();
-        renderer.render(posX - current.getWidth() / 2, posY - current.getHeight() / 2, currentframe);
+        renderer.render(posX - current.getWidth() / 2, posY - current.getHeight() / 2, currentframe, current);
         //renderer.endRender();
 
         if (animation.getPlayMode() == Animation.PlayMode.NORMAL &&

@@ -1,20 +1,27 @@
 package com.game.arkanoid.engine;
 
+import com.game.arkanoid.leveldata.GameDataManager;
+
 /**
  * Manages the global state of the game session (score, lives, level).
  * This is a Singleton class, meaning only one instance of it can exist.
  */
 public class GameManager {
     private static GameManager gameManager;
+    private GameDataManager gameDataManager;
 
     private int score;
     private int lives;
     private int currentLevel;
+    private int highScore;
+    private int maxLevel;
 
     public enum GameState { RUNNING, PAUSED, GAMEOVER }
     private GameState gameState;
 
-    private GameManager() {}
+    private GameManager() {
+        gameDataManager = new GameDataManager();
+    }
 
 
     public static GameManager getGameManager() {
@@ -34,11 +41,44 @@ public class GameManager {
         this.gameState = GameState.RUNNING;
     }
 
+
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
+
     public void goToNextLevel() {
         this.currentLevel++;
         // Thêm logic reset vị trí bóng/paddle ở GameWorld
     }
 
+    public int getMaxLevel() {
+        return maxLevel;
+    }
+
+    public int getHighScore() {
+        return highScore;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void setMaxLevel(int maxLevel) {
+        this.maxLevel = maxLevel;
+    }
+
+    public void readData() {
+        gameDataManager.loadDataAndPrint();
+        highScore = gameDataManager.getPlayerData().highScore;
+        maxLevel = gameDataManager.getPlayerData().maxLevel;
+    }
+
+    public void writeData() {
+        if(score >= highScore) {
+            gameDataManager.getPlayerData().highScore = score;
+        }
+        gameDataManager.saveData();
+    }
 
     //extra points
     public void addScore(int points) { this.score += points; }

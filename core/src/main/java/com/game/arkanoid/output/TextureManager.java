@@ -88,21 +88,29 @@ public class TextureManager {
         loadTextures("BRICK_3", "textures/brick_3.png");
         loadTextures("BRICK_4", "textures/brick_4.png");
         loadTextures("BRICK_5", "textures/brick_5.png");
+        loadTextures("BRICK_5_BREAK", "textures/brick_5_break.png");
         loadTextures("BRICK_6", "textures/brick_6.png");
+        loadTextures("DEFAULT_TEXTURE", "textures/default_texture.png");
 
         loadTextures("BOOST_PADDLE","textures/boost_paddle.png");
         loadTextures("BOOST_SPEED","textures/boost_speed.png");
         loadTextures("BOOST_HEART","textures/boost_heart.png");
 
+        loadTextures("BALL_BREAK","textures/ball_break.png");
+        loadTextures("FIRE_BALL","textures/fire_ball.png");
+        loadTextures("BALL_INVISIBLE","textures/ball_invisible.png");
+
         loadTextures("BALL_1", "textures/ball_1.png");
         loadTextures("BALL_2", "textures/ball_2.png");
         loadTextures("BALL_3", "textures/ball_3.png");
-
 
         loadTextures("PADDLE_NORMAL", "textures/paddle.png");
         loadTextures("CHALLENGE_CHAOS_BG", "images/challenge_chaos_bg.png");
 
         loadTextures("CLOUD_SHEET","spritesheet/cloud.png");
         loadTextures("FIRE_SHEET", "spritesheet/fire.png");
+        loadTextures("GAS_SHEET", "spritesheet/gas.png");
+        loadTextures("BREAK_SHEET", "spritesheet/break.png");
+
     }
 }

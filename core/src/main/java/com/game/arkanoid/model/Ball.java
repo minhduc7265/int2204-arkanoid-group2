@@ -22,14 +22,16 @@ public class Ball extends MovableObject {
     private float targetSpeed;  // the velocity we want to assign to the ball
     private final float initialSpeed;
     private Circle boundCircle;
+    private int flag;
 
 
     public Ball(float x, float y, int weight, int height, float initialSpeed) {
-        super(x, y, weight, height, "BallTexture");
+        super(x, y, weight, height);
         this.boundCircle = new Circle(x, y, 11f);
         this.initialSpeed = initialSpeed;
         setSpeed(initialSpeed);
         enableAcceleration(false);
+        this.flag = 0;
     }
 
     // --- update ---
@@ -82,6 +84,14 @@ public class Ball extends MovableObject {
     public void setTargetSpeed(float targetSpeed) {
         this.targetSpeed = targetSpeed;
         setSpeed(this.targetSpeed);
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
+    }
+
+    public int getFlag() {
+        return flag;
     }
 
     public float getTargetSpeed() {
