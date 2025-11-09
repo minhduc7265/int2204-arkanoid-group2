@@ -5,8 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.game.arkanoid.Main;
 import com.game.arkanoid.engine.GameManager;
-import com.game.arkanoid.output.Bass;
-import com.game.arkanoid.output.MasterRenderer;
 import com.game.arkanoid.output.MusicManager;
 import com.game.arkanoid.world.GameWorld;
 
@@ -14,43 +12,72 @@ public class GameScreen implements Screen {
     private Main game;
     private GameWorld world;
     private GameManager gameManager;
+    private ButtonManager buttonManager;
+    private boolean isShowGameOver;
 
     public GameScreen(Main game) {
         this.game = game;
         this.world = new GameWorld();
         this.gameManager = GameManager.getGameManager();
+        this.isShowGameOver = false;
+        buttonManager = new ButtonManager(game);
     }
 
 
     @Override
     public void render(float delta) {
-        // Xử lý input Pause
+        handleInputPause();
+        updateLogicGame(delta);
+        renderGame();
+    }
+
+
+    private void handleInputPause() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
-            if (!gameManager.isPaused()) {
+            if (gameManager.isPaused()) {
+                gameManager.setGameState(GameManager.GameState.RUNNING);
+                MusicManager.getInstance().BASS_playMusic();
+            } else {
                 gameManager.setGameState(GameManager.GameState.PAUSED);
-                Bass.INSTANCE.BASS_ChannelPause(MasterRenderer.hMusic);
-                game.setScreen(new PauseScreen(game, this, gameManager));
+                MusicManager.getInstance().BASS_pauseMusic();
             }
         }
+    }
 
-        // Chỉ cập nhật logic nếu game không bị pause
-        if (!gameManager.isPaused()) {
+    private void updateLogicGame(float delta) {
+        if (gameManager.isPaused() || gameManager.getGameState() == GameManager.GameState.GAMEOVER) {
+            return;
+        } else {
             world.update(delta);
         }
+    }
 
-        // Giao việc vẽ cho MasterRenderer
+    private void renderGame() {
         game.getMasterRenderer().clearScreen();
         game.getMasterRenderer().renderGameWorld(world);
         game.getMasterRenderer().renderHUD(gameManager);
 
-    }
-    public GameWorld getGameWorld() {
-        return this.world;
+        if (gameManager.isPaused()) {
+            game.getMasterRenderer().renderPauseText();
+        }
+        if (gameManager.getGameState() == GameManager.GameState.GAMEOVER) {
+            showButton();
+            game.getMasterRenderer().renderGameOver(buttonManager.getStage());
+        }
     }
 
     // ... các hàm còn lại của Screen (show, hide, dispose...)
     @Override
     public void show() {
+
+    }
+
+    public void showButton() {
+        if (isShowGameOver != true) {
+            buttonManager.showGameOver();
+            isShowGameOver = true;
+        }
+
     }
 
     @Override
@@ -67,9 +94,11 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
+        Gdx.input.setInputProcessor(null);
     }
 
     @Override
     public void dispose() {
+        buttonManager.dispose();
     }
 }

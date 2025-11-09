@@ -1,6 +1,5 @@
 package com.game.arkanoid.engine;
 
-
 public class Point {
     public float x;
     public float y;

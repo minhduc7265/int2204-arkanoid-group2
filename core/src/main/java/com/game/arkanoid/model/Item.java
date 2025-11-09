@@ -14,7 +14,10 @@ public class Item extends GameObject {
         BALL_INVISIBLE,
         FIRE_BALL
     }
-    //Ball Debuff là ??
+
+    private static final int DEFAULT_WIDTH = 70;
+    private static final int DEFAULT_HEIGHT = 63;
+
 
     private final ItemType type;
     private int duration;
@@ -26,7 +29,7 @@ public class Item extends GameObject {
     public Item(float x, float y, ItemType type, int duration) {
         super();
         setPosition(x, y);
-        setArea(70, 63);
+        setArea(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setStatus(true);
         this.type = type;
         this.duration = duration;
