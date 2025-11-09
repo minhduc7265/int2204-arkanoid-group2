@@ -1,5 +1,8 @@
 package com.game.arkanoid.output;
 
+import com.game.arkanoid.output.Bass;
+import com.game.arkanoid.output.MasterRenderer;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -11,6 +14,8 @@ public class SoundManager {
     private static SoundManager soundManager;
 
     private final Map<String, Sound> listSounds;
+
+    private boolean isMuted;
 
     private SoundManager() {
         listSounds = new HashMap<>();
@@ -59,6 +64,11 @@ public class SoundManager {
      */
     public void playSound(String name) {
         Sound sound = listSounds.get(name);
+
+        if (isMuted) {
+            return;
+        }
+
         if (sound == null) {
             System.err.println(name + " does not exist.");
             System.err.println("Play fail.");
@@ -85,6 +95,13 @@ public class SoundManager {
 
 
 
+    }
+
+    public void toggleMute() {
+        this.isMuted = !this.isMuted;
+    }
+    public boolean isMuted() {
+        return this.isMuted;
     }
 
 

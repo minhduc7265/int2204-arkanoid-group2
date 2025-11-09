@@ -3,6 +3,18 @@
     "default": {
       "imageUp": "play_button_up",
       "imageDown": "play_button_down"
+    },
+    "continue-style": {
+      "imageUp": "continue_button_up",
+      "imageDown": "continue_button_down"
+    },
+    "restart-style": {
+      "imageUp": "restart_button_up",
+      "imageDown": "restart_button_down"
+    },
+    "volume-style": {
+      "imageUp": "volume_button_up",
+      "imageDown": "volume_button_down"
     }
   }
 }

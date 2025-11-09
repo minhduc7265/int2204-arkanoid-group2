@@ -32,8 +32,8 @@ public class MainMenuScreen implements Screen {
         this.backgroundTexture = new Texture(Gdx.files.internal("backgrounds/menu_background.png"));
 
         // Load file .json, và chỉ định file .atlas tương ứng của nó
-        TextureAtlas PlayAtlas = new TextureAtlas(Gdx.files.internal("skin/star_pack.atlas"));
-        this.skin = new Skin(Gdx.files.internal("skin/gameskin.json"), PlayAtlas);
+        TextureAtlas PlayAtlas = new TextureAtlas(Gdx.files.internal("skin/main_menu_skin.atlas"));
+        this.skin = new Skin(Gdx.files.internal("skin/main_menu_skin.json"), PlayAtlas);
     }
 
     @Override

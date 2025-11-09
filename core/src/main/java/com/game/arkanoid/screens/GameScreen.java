@@ -24,38 +24,28 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        handleInputPause();
-        updateLogicGame(delta);
-        renderGame();
-    }
-
-
-    private void handleInputPause() {
+        // Xử lý input Pause
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
-            if (gameManager.isPaused()) {
-                gameManager.setGameState(GameManager.GameState.RUNNING);
-                MusicManager.getInstance().BASS_playMusic();
-            } else {
+            if (!gameManager.isPaused()) {
                 gameManager.setGameState(GameManager.GameState.PAUSED);
-                MusicManager.getInstance().BASS_pauseMusic();
+                Bass.INSTANCE.BASS_ChannelPause(MasterRenderer.hMusic);
+                game.setScreen(new PauseScreen(game, this, gameManager));
             }
         }
-    }
 
-    private void updateLogicGame(float delta) {
+        // Chỉ cập nhật logic nếu game không bị pause
         if (!gameManager.isPaused()) {
             world.update(delta);
         }
-    }
 
-    private void renderGame() {
+        // Giao việc vẽ cho MasterRenderer
         game.getMasterRenderer().clearScreen();
         game.getMasterRenderer().renderGameWorld(world);
         game.getMasterRenderer().renderHUD(gameManager);
 
-        if (gameManager.isPaused()) {
-            game.getMasterRenderer().renderPauseText();
-        }
+    }
+    public GameWorld getGameWorld() {
+        return this.world;
     }
 
     // ... các hàm còn lại của Screen (show, hide, dispose...)
