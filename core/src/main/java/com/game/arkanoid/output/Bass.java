@@ -3,8 +3,15 @@ package com.game.arkanoid.output;
 import com.badlogic.gdx.Gdx;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+
 
 public interface Bass extends Library {
+    Bass INSTANCE = (Bass) Native.load(
+        Gdx.files.internal("dll/bass.dll").path(),
+        Bass.class
+    );
+
     int BASS_DEVICE_DEFAULT    = 0xFFFFFFFF;
     int BASS_MUSIC_RAMP        = 0x200;
     int BASS_MUSIC_LOOP        = 0x4;
