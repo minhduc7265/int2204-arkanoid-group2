@@ -2,7 +2,6 @@ package com.game.arkanoid.model;
 
 import com.game.arkanoid.output.AnimationFactory;
 import com.game.arkanoid.output.SoundManager;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;

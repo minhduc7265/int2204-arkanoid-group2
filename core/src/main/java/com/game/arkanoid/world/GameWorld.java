@@ -2,15 +2,17 @@ package com.game.arkanoid.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Vector2;
-import com.game.arkanoid.engine.Collision;
 import com.game.arkanoid.engine.GameManager;
-import com.game.arkanoid.model.*;
-import com.game.arkanoid.output.AnimationFactory;
-import com.game.arkanoid.output.Score;
-import com.game.arkanoid.output.SoundManager;
-
-import java.util.*;
+import com.game.arkanoid.model.Ball;
+import com.game.arkanoid.model.Brick;
+import com.game.arkanoid.model.ItemManager;
+import com.game.arkanoid.model.Paddle;
+import com.game.arkanoid.model.Item;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Iterator;
 
 public class GameWorld {
     private GameManager gameManager;
@@ -21,7 +23,6 @@ public class GameWorld {
     private ItemManager itemManager;
     private final Map<Integer, Integer> Score;
     private boolean isPushBall;
-
 
 
     private CollisionManager collisionManager;
@@ -66,14 +67,13 @@ public class GameWorld {
     }
 
 
-
     //Main update
     public void update(float delta) {
         handleInput();
         updateEntities(delta);
         //if (!ball.getStatus()) ball = null;
         handleLevelProgression();
-        handleGameOver();
+        //handleGameOver();
     }
 
     // Getter để MasterRenderer có thể lấy đối tượng để vẽ
@@ -112,7 +112,6 @@ public class GameWorld {
     }
 
 
-
     private void checkBricks() {
         Iterator<Brick> iteratorBrick = bricks.iterator();
         while (iteratorBrick.hasNext()) {
@@ -140,14 +139,13 @@ public class GameWorld {
 
     private void handleBall(float delta) {
         if (ball.getStatus()) {
-            if(isPushBall) {
+            if (isPushBall) {
+                ball.update(delta);
                 collisionManager.checkCollision(ball, bricks);
                 ball.handlePaddle(paddle);
-                ball.update(delta);
-            }
-            else{
+            } else {
                 ball.setPosition(paddle.getXPos() + paddle.getWidth() / 2, paddle.getYPos() + paddle.getHeight() + 10);
-                if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                     isPushBall = true;
                 }
             }
@@ -171,6 +169,8 @@ public class GameWorld {
 
     private void handleGameOver() {
         if (gameManager.getGameState() == GameManager.GameState.GAMEOVER) {
+
+
             gameManager.startNewGame();
             initializeLevel(gameManager.getCurrentLevel());
         }

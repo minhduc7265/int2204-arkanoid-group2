@@ -5,8 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.game.arkanoid.Main;
 import com.game.arkanoid.engine.GameManager;
-import com.game.arkanoid.output.Bass;
-import com.game.arkanoid.output.MasterRenderer;
 import com.game.arkanoid.output.MusicManager;
 import com.game.arkanoid.world.GameWorld;
 
@@ -14,11 +12,15 @@ public class GameScreen implements Screen {
     private Main game;
     private GameWorld world;
     private GameManager gameManager;
+    private ButtonManager buttonManager;
+    private boolean isShowGameOver;
 
     public GameScreen(Main game) {
         this.game = game;
         this.world = new GameWorld();
         this.gameManager = GameManager.getGameManager();
+        this.isShowGameOver = false;
+        buttonManager = new ButtonManager(game);
     }
 
 
@@ -43,7 +45,9 @@ public class GameScreen implements Screen {
     }
 
     private void updateLogicGame(float delta) {
-        if (!gameManager.isPaused()) {
+        if (gameManager.isPaused() || gameManager.getGameState() == GameManager.GameState.GAMEOVER) {
+            return;
+        } else {
             world.update(delta);
         }
     }
@@ -56,11 +60,24 @@ public class GameScreen implements Screen {
         if (gameManager.isPaused()) {
             game.getMasterRenderer().renderPauseText();
         }
+        if (gameManager.getGameState() == GameManager.GameState.GAMEOVER) {
+            showButton();
+            game.getMasterRenderer().renderGameOver(buttonManager.getStage());
+        }
     }
 
     // ... các hàm còn lại của Screen (show, hide, dispose...)
     @Override
     public void show() {
+
+    }
+
+    public void showButton() {
+        if (isShowGameOver != true) {
+            buttonManager.showGameOver();
+            isShowGameOver = true;
+        }
+
     }
 
     @Override
@@ -77,9 +94,11 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
+        Gdx.input.setInputProcessor(null);
     }
 
     @Override
     public void dispose() {
+        buttonManager.dispose();
     }
 }

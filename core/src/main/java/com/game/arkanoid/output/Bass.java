@@ -1,8 +1,6 @@
 package com.game.arkanoid.output;
 
-import com.badlogic.gdx.Gdx;
 import com.sun.jna.Library;
-import com.sun.jna.Native;
 
 public interface Bass extends Library {
     int BASS_DEVICE_DEFAULT    = 0xFFFFFFFF;
@@ -13,9 +11,6 @@ public interface Bass extends Library {
     int BASS_DEVICE_INIT	   = 0x4;
     int BASS_DEVICE_LOOPBACK   = 0x8;
     int BASS_DEVICE_DEFAULTCOM = 0x80;
-
-
-
 
     boolean BASS_Init(int device, int freq, int flags, long win, long cl);
 

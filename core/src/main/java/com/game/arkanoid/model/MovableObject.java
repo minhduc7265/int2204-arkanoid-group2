@@ -7,11 +7,7 @@ package com.game.arkanoid.model;
  * - Supports bounce (reversal direction) when colliding with edges or other objects.
  */
 
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-
-import java.util.*;
 
 public class MovableObject extends GameObject {
     private float vx;   //Velocity of x

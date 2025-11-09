@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.game.arkanoid.output.MasterRenderer;
+import com.game.arkanoid.screens.ButtonManager;
 import com.game.arkanoid.screens.MainMenuScreen;
 
 public class Main extends Game {
@@ -37,7 +38,6 @@ public class Main extends Game {
         config.setForegroundFPS(GAME_FPS);
         config.setResizable(false);
         // Khởi chạy chính lớp Main, không phải GameManager nữa
-
         new Lwjgl3Application(new Main(), config);
     }
 }

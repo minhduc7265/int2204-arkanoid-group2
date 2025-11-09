@@ -1,0 +1,8 @@
+{
+  "com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle": {
+    "default": {
+      "imageUp": "credit_button_up",
+      "imageDown": "credit_button_down"
+    }
+  }
+}

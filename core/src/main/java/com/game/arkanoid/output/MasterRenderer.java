@@ -1,6 +1,6 @@
 package com.game.arkanoid.output;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -24,6 +24,13 @@ public class MasterRenderer {
     private TextObject currentHeart;
     //Để render level hiện tại
     private TextObject currentLevel;
+
+    private TextObject creditName1;
+    private TextObject creditName2;
+    private TextObject creditName3;
+    private TextObject creditName4;
+    private TextObject creditMainString;
+
     //Music--> Chuyển thành private khi tổ chức lại dữ liệu
     public static long hMusic;
 
@@ -49,6 +56,12 @@ public class MasterRenderer {
         currentScore = new TextObject("", 50f, 764f);
         currentHeart = new TextObject("", 50f, 728f);
         currentLevel = new TextObject("", 0f, 24f);
+        creditMainString = new TextObject("Group Member", 330f, 600f);
+        creditName1 = new TextObject("Hoang Minh Duc               StudentID: 24021412", 200f,500f);
+        creditName2 = new TextObject("Tran Nhat Hung               StudentID: 24020153", 200f,450f);
+        creditName3 = new TextObject("Nguyen Cong Huy Hoang     StudentID: 24021486", 200f,400f);
+        creditName4 = new TextObject("Le Tuan Anh                  StudentID: 24021366", 200f,350f);
+
 
         GameManager.getGameManager().readData();
     }
@@ -63,6 +76,25 @@ public class MasterRenderer {
     public void renderMainMenu(Texture background, Stage stage) {
         playMainMenuMusic();
         drawBackground(background);
+        drawStage(stage);
+    }
+
+    public void renderCredit(Texture background, Stage stage) {
+        drawBackground(background);
+        drawStage(stage);
+
+        renderer.beginRender();
+        renderer.render(font.getBitmapFont(), creditMainString);
+        renderer.render(font.getBitmapFont(), creditName1);
+        renderer.render(font.getBitmapFont(), creditName2);
+        renderer.render(font.getBitmapFont(), creditName3);
+        renderer.render(font.getBitmapFont(), creditName4);
+        renderer.endRender();
+    }
+
+    public void renderGameOver(Stage stage) {
+
+
         drawStage(stage);
     }
 

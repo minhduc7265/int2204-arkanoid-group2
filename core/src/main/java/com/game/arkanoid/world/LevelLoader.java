@@ -7,7 +7,6 @@ import com.game.arkanoid.leveldata.BrickInformation;
 import com.game.arkanoid.leveldata.LevelInfo;
 import com.game.arkanoid.model.Brick;
 import com.game.arkanoid.model.BrickFactory;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +27,6 @@ public class LevelLoader {
                     BrickInformation temp = brick.next();
                     Brick brick_temp = BrickFactory.call(temp.power,temp.item, temp.ox, temp.oy,80,32);
                     newBricks.add(brick_temp);
-                    System.out.println("+1");
                 }
             }
             return newBricks;

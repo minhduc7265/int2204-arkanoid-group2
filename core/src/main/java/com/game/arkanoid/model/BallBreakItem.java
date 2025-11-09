@@ -1,6 +1,5 @@
 package com.game.arkanoid.model;
 
-import com.game.arkanoid.engine.GameManager;
 import com.game.arkanoid.output.AnimationFactory;
 
 public class BallBreakItem extends Item {

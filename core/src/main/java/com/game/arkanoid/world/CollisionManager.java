@@ -1,8 +1,11 @@
 package com.game.arkanoid.world;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.game.arkanoid.engine.Collision;
+import com.game.arkanoid.engine.CollisionResult;
 import com.game.arkanoid.engine.GameManager;
 import com.game.arkanoid.model.Ball;
 import com.game.arkanoid.model.Brick;
@@ -32,60 +35,93 @@ public class CollisionManager {
     public void checkCollision(Ball ball, List<Brick> bricks) {
         float delta = Gdx.graphics.getDeltaTime();
         Vector2 vectorMove = new Vector2(ball.getVelocityX() * delta, ball.getVelocityY() * delta);
-        float[] timeInfo = new float[2];
+        Vector2 vIn = new Vector2(ball.getVelocityX(), ball.getVelocityY());
         float minT = Float.MAX_VALUE;
         Brick hitBrick = null;
-        float[] bestInfo = new float[2];
+        CollisionResult bestResult = new CollisionResult();
+
+        Brick penetrationBrick = null;
+        CollisionResult insideResult = new CollisionResult();
+
 
         for (Brick brick : bricks) {
             if (!brick.getStatus()) continue;
-            if (Collision.IntersectMovingSphereAABB(ball.getBoundCircle(), vectorMove, brick.getBounds(), timeInfo) == 1) {
-                if (timeInfo[0] < minT) {
-                    minT = timeInfo[0];
+            CollisionResult collisionResult = new CollisionResult();
+            if (Collision.IntersectMovingSphereAABB(ball.getBoundCircle(), vectorMove, brick.getBounds(), collisionResult) == 1) {
+
+                if (collisionResult.typeCollision == CollisionResult.TypeCollision.INSIDE) {
+                    penetrationBrick = brick;
+                    insideResult.timeCollision = collisionResult.timeCollision;
+                    insideResult.typeCollision = collisionResult.typeCollision;
+                    insideResult.normal.set(collisionResult.normal);
+                    break;
+                }
+
+                if (collisionResult.timeCollision < minT) {
+                    minT = collisionResult.timeCollision;
                     hitBrick = brick;
-                    bestInfo[0] = timeInfo[0];
-                    bestInfo[1] = timeInfo[1];
+                    bestResult.timeCollision = collisionResult.timeCollision;
+                    bestResult.typeCollision = collisionResult.typeCollision;
+                    bestResult.normal.set(collisionResult.normal);
                 }
             }
         }
 
-        if (hitBrick == null) return;
+        if (penetrationBrick != null) {
+            System.out.println("Va chạm xuyên thủng");
+            pushBallOut(ball, penetrationBrick.getBounds(), insideResult);
+            if (insideResult.typeCollision == CollisionResult.TypeCollision.INSIDE_X) {
+                ball.bounceX();
+            } else {
+                ball.bounceY();
+            }
+            handleBrickHit(penetrationBrick, ball, bricks);
 
-        ball.setPosition(ball.getXPos() + bestInfo[0] * vectorMove.x,
-            ball.getYPos() + bestInfo[0] * vectorMove.y);
-
-        if ((int) bestInfo[1] == 1) {
-            ball.bounceX();
-            System.out.println("Va cạnh dọc");
-        } else if ((int) bestInfo[1] == 2) {
-            ball.bounceY();
-            System.out.println("Va cạnh ngang");
-        } else if ((int) bestInfo[1] == 3) {
-            ball.bounceY();
-            ball.bounceX();
-            System.out.println("Va vào đỉnh");
-        } else {
-            ball.bounceX();
-            ball.bounceY();
-            System.out.println(bestInfo[1]);
-            System.out.println("Tình trạng bóng vào trong viên gạch");
-
+            return;
         }
-        hitBrick.setBlood(hitBrick.getBlood() - 1);
+        if (hitBrick != null) {
+            float best = bestResult.timeCollision;
+            ball.setPosition(ball.getXPos() + best * vectorMove.x,
+                ball.getYPos() + best * vectorMove.y);
 
+            Vector2 n = new Vector2(bestResult.normal);
+            float vInDotN = vIn.dot(n);
+            if(vInDotN > 0) {
+                float vOutX = vIn.x - 2 * vInDotN * n.x;
+                float vOutY = vIn.y - 2 * vInDotN * n.y;
+                ball.setVelocity(vOutX, vOutY);
+            }
+
+
+            if (bestResult.typeCollision == CollisionResult.TypeCollision.VERTICAL_EDGE) {
+                System.out.println("Va cạnh dọc");
+            } else if (bestResult.typeCollision == CollisionResult.TypeCollision.HORIZONTAL_EDGE) {
+                System.out.println("Va cạnh ngang");
+            } else if (bestResult.typeCollision == CollisionResult.TypeCollision.VERTEX) {
+                System.out.println("Va vào đỉnh");
+            }
+            handleBrickHit(hitBrick, ball, bricks);
+        }
+
+
+    }
+
+    private void handleBrickHit(Brick hitBrick, Ball ball, List<Brick> bricks) {
+        hitBrick.setBlood(hitBrick.getBlood() - 1);
         // 1. Lấy tâm của hitBrick
         float hitCenterX = hitBrick.getXPos() + hitBrick.getWidth() / 2;
         float hitCenterY = hitBrick.getYPos() + hitBrick.getHeight() / 2;
 
 
-        if(ball.getFlag() == 1) {
-            for(Brick brick: bricks){
-                if(!brick.getStatus() || brick == hitBrick) continue;
+        if (ball.getFlag() == 1) {
+            for (Brick brick : bricks) {
+                if (!brick.getStatus() || brick == hitBrick) continue;
+
                 float brickCenterX = brick.getXPos() + brick.getWidth() / 2;
                 float brickCenterY = brick.getYPos() + brick.getHeight() / 2;
                 float dx = hitCenterX - brickCenterX;
                 float dy = hitCenterY - brickCenterY;
-                float distance = (float) Math.sqrt(dx*dx + dy*dy); // Tính khoảng cách
+                float distance = (float) Math.sqrt(dx * dx + dy * dy); // Tính khoảng cách
                 float explosionRadius = 100.0f; // Ví dụ: bán kính 100 pixel
                 if (distance < explosionRadius) {
                     brick.setBlood(brick.getBlood() - 1);
@@ -101,10 +137,45 @@ public class CollisionManager {
         }
 
 
-        AnimationFactory.call(AnimationFactory.TypeAnimation.CLOUD_ANIM,
+        /*AnimationFactory.call(AnimationFactory.TypeAnimation.CLOUD_ANIM,
             (int) hitBrick.getXPos() + hitBrick.getWidth() / 2,
             (int) hitBrick.getYPos() + hitBrick.getHeight() / 2);
 
-        SoundManager.getInstance().playSound("HIT");
+        SoundManager.getInstance().playSound("HIT");*/
+    }
+
+
+    private void pushBallOut(Ball ball, Rectangle brickBounds, CollisionResult result) {
+        Circle ballCircle = ball.getBoundCircle();
+        float cX = ballCircle.x;
+        float cY = ballCircle.y;
+
+        float dist_to_left = cX - brickBounds.x;
+        float dist_to_right = (brickBounds.x + brickBounds.width) - cX;
+        float dist_to_bottom = cY - brickBounds.y;
+        float dist_to_top = (brickBounds.y + brickBounds.height) - cY;
+
+        float min_dist = dist_to_left;
+        Vector2 normal = new Vector2(-1, 0); // Đẩy trái
+        result.typeCollision = CollisionResult.TypeCollision.INSIDE_X;
+
+        if (dist_to_right < min_dist) {
+            min_dist = dist_to_right;
+            normal.set(1, 0); // Đẩy phải
+            result.typeCollision = CollisionResult.TypeCollision.INSIDE_X;
+        }
+        if (dist_to_bottom < min_dist) {
+            min_dist = dist_to_bottom;
+            normal.set(0, -1); // Đẩy dưới
+            result.typeCollision = CollisionResult.TypeCollision.INSIDE_Y;
+        }
+        if (dist_to_top < min_dist) {
+            min_dist = dist_to_top;
+            normal.set(0, 1); // Đẩy trên
+            result.typeCollision = CollisionResult.TypeCollision.INSIDE_Y;
+        }
+        final float EPSILON = 1f;
+        ball.setPosition(ball.getXPos() + normal.x * (min_dist + EPSILON),
+            ball.getYPos() + normal.y * (min_dist + EPSILON));
     }
 }

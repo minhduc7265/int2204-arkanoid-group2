@@ -7,6 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 public class Collision {
     //Lưu ý: Mã nguồn tham khảo từ cuốn Real Time Collision Detection của Christer Ericson
     public static final float EPSILON = 1e-6f;
+    public static final Vector2 RIGHT = new Vector2(1f,0f);
+    public static final Vector2 LEFT = new Vector2(-1f, 0f);
+    public static final Vector2 UP = new Vector2(0f,1f);
+    public static final Vector2 DOWN = new Vector2(0f, -1f);
 
     public static Point Corner(AABB b, int n) {
         Point p = new Point();
@@ -16,7 +20,7 @@ public class Collision {
     }
 
 
-    public static int IntersectRayAABB(Point p, Vector2 d, AABB a, float[] tmin, Point q) {
+    public static int IntersectRayAABB(Point p, Vector2 d, AABB a, CollisionResult collisionResult, Point q) {
         float tMIN = 0.0f;
         float tMAX = Float.MAX_VALUE;
 
@@ -61,7 +65,7 @@ public class Collision {
             if (tMIN > tMAX) return 0;
         }
 
-        tmin[0] = tMIN;
+        collisionResult.timeCollision = tMIN;
 
         q.x = p.x + tMIN * d.x;
         q.y = p.y + tMIN * d.y;
@@ -72,7 +76,7 @@ public class Collision {
     }
 
 
-    public static int IntersectMovingSphereAABB(Circle c, Vector2 d, Rectangle rec, float[] time) {
+    public static int IntersectMovingSphereAABB(Circle c, Vector2 d, Rectangle rec, CollisionResult collisionResult) {
         //c là cái quả bóng
         //rec là viên gạch
         //d là vector di chuyển tức là hướng quả bóng nó sẽ di chuyển
@@ -93,7 +97,7 @@ public class Collision {
         Point p = new Point();
 
         //Tức là không va
-        if (IntersectRayAABB(new Point(c.x, c.y), d, e, time, p) == 0 || time[0] > 1f) {
+        if (IntersectRayAABB(new Point(c.x, c.y), d, e, collisionResult, p) == 0 || collisionResult.timeCollision > 1f) {
             return 0;
         }
 
@@ -109,6 +113,11 @@ public class Collision {
         //Lấy kết quả sau
         int m = u + v;
 
+        if (m == 0) {
+            collisionResult.typeCollision = CollisionResult.TypeCollision.INSIDE;
+            return 1;
+        }
+
         //Tạo đường di chuyển
         //Kết quả sẽ là 1 đường thằng với điểm đầu và điểm cuối
         Segment seg = new Segment(new Point(c.x, c.y), new Point(c.x + d.x, c.y + d.y));
@@ -118,22 +127,27 @@ public class Collision {
 
         if (isEgde) {
             if (m == 1) {
-                time[1] = 1f;
+                collisionResult.normal = (u == 1 ? new Vector2(RIGHT) : new Vector2(LEFT));
+                collisionResult.typeCollision = CollisionResult.TypeCollision.VERTICAL_EDGE;
             } else if (m == 2) {
-                time[1] = 2f;
+                collisionResult.normal = (u == 2 ? new Vector2(UP) : new Vector2(DOWN));
+                collisionResult.typeCollision = CollisionResult.TypeCollision.HORIZONTAL_EDGE;
             }
+
             return 1;
         }
 
         //Nếu m == 3 thì sử dụng hàm sau
 
+        collisionResult.timeCollision = Float.MAX_VALUE;
+
         Point corner = Collision.Corner(b, v);
-        return IntersectSegmentCircle(seg, corner, c.radius, time);
+        return IntersectSegmentCircle(seg, corner, c.radius, collisionResult);
 
 
     }
 
-    private static int IntersectSegmentCircle(Segment seg, Point p, float r, float[] time) {
+    private static int IntersectSegmentCircle(Segment seg, Point p, float r, CollisionResult collisionResult) {
         Vector2 d = new Vector2(seg.p1.x - seg.p0.x, seg.p1.y - seg.p0.y);
         Vector2 m = new Vector2(seg.p0.x - p.x, seg.p0.y - p.y);
         float pow2r = r * r;
@@ -143,7 +157,7 @@ public class Collision {
         float c = m.dot(m) - pow2r;
 
         if (c < 0.0f) {
-            time[0] = 0.0f;
+            collisionResult.timeCollision = 0.0f;
             return 1;
         }
         float delta = b * b - 4f * a * c;
@@ -156,17 +170,25 @@ public class Collision {
         float t0 = (-b + (float) Math.sqrt(delta)) / (2.0f * a);
         float t1 = (-b - (float) Math.sqrt(delta)) / (2.0f * a);
 
-        if (t0 >= 0.0f && t0 <= 1.0f && t0 < time[0]) {
-            time[0] = t0;
-            time[1] = 3f;
-            return 1;
-        }
-        if (t1 >= 0.0f && t1 <= 1.0f && t1 < time[0]) {
-            time[0] = t1;
-            time[1] = 3f;
-            return 1;
-        }
+        boolean ifChangedTime = false;
 
+        if (t0 >= 0.0f && t0 <= 1.0f && t0 < collisionResult.timeCollision) {
+            collisionResult.timeCollision = t0;
+            ifChangedTime = true;
+        }
+        if (t1 >= 0.0f && t1 <= 1.0f && t1 < collisionResult.timeCollision) {
+            collisionResult.timeCollision = t1;
+            ifChangedTime = true;
+        }
+        if (ifChangedTime) {
+            collisionResult.typeCollision = CollisionResult.TypeCollision.VERTEX;
+            float impactX = seg.p0.x + d.x * collisionResult.timeCollision;
+            float impactY = seg.p0.y + d.y * collisionResult.timeCollision;
+            Vector2 normal = new Vector2(impactX - p.x, impactY - p.y);
+            normal.nor();
+            collisionResult.normal.set(normal);
+            return 1;
+        }
         return 0;
 
     }

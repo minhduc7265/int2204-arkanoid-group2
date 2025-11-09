@@ -3,45 +3,31 @@ package com.game.arkanoid.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.game.arkanoid.Main;
 import com.game.arkanoid.engine.GameManager;
-import com.game.arkanoid.output.MasterRenderer;
-import com.game.arkanoid.output.MusicManager;
 
 public class MainMenuScreen implements Screen {
     private final Main game;
-    private Stage stage;
-    private Skin skin;
     private Texture backgroundTexture;
     private GameManager gameManager;//Lấy dữ liệu điểm để in ra ngoài màn hình
+    private ButtonManager buttonManager;
 
     public MainMenuScreen(Main game) {
         this.game = game;
-        this.stage = new Stage(new ScreenViewport());
+        buttonManager = new ButtonManager(game);
         this.gameManager = GameManager.getGameManager();
 
         // Load các tài nguyên cần thiết
         this.backgroundTexture = new Texture(Gdx.files.internal("backgrounds/menu_background.png"));
-
-        // Load file .json, và chỉ định file .atlas tương ứng của nó
-        TextureAtlas PlayAtlas = new TextureAtlas(Gdx.files.internal("skin/star_pack.atlas"));
-        this.skin = new Skin(Gdx.files.internal("skin/gameskin.json"), PlayAtlas);
     }
 
     @Override
     public void show() {
+        buttonManager.showMenu();
 
 
 
-        Gdx.input.setInputProcessor(stage);
+        /*Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
         table.setFillParent(true);
@@ -64,27 +50,28 @@ public class MainMenuScreen implements Screen {
         table.add(playButton).size(250, 75).pad(10);
 
         // LƯU Ý: Để tạo các nút khác (How to Play, Exit...), bạn cần phải
-        // định nghĩa thêm các style cho chúng trong file gameskin.json trước.
+        // định nghĩa thêm các style cho chúng trong file gameskin.json trước.*/
     }
 
     @Override
     public void render(float delta) {
         // Giao việc vẽ cho MasterRenderer
         game.getMasterRenderer().clearScreen();
-        game.getMasterRenderer().renderMainMenu(backgroundTexture, stage);
+        game.getMasterRenderer().renderMainMenu(backgroundTexture, buttonManager.getStage());
         game.getMasterRenderer().renderHighScore(gameManager);
     }
 
     @Override
     public void dispose() {
-        stage.dispose();
-        skin.dispose();
+        buttonManager.dispose();
         backgroundTexture.dispose();
     }
 
     // Các hàm khác không đổi
-    @Override public void resize(int width, int height) { stage.getViewport().update(width, height, true); }
+    @Override public void resize(int width, int height) { buttonManager.getStage().getViewport().update(width, height, true); }
     @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void hide() {}
+    @Override public void hide() {
+        Gdx.input.setInputProcessor(null);
+    }
 }

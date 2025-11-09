@@ -1,0 +1,10 @@
+credit_pack.png
+size: 1472, 704
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+credit_button_down
+  bounds: 0, 0, 736, 704
+credit_button_up
+  bounds: 736, 0, 736, 704
