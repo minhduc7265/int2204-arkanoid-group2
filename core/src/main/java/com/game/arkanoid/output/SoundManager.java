@@ -16,7 +16,6 @@ public class SoundManager {
 
     private final Map<String, Sound> listSounds;
 
-    private boolean isMuted;
 
     private SoundManager() {
         listSounds = new HashMap<>();
@@ -65,11 +64,6 @@ public class SoundManager {
      */
     public void playSound(String name) {
         Sound sound = listSounds.get(name);
-
-        if (isMuted) {
-            return;
-        }
-
         if (sound == null) {
             System.err.println(name + " does not exist.");
             System.err.println("Play fail.");
@@ -98,12 +92,6 @@ public class SoundManager {
 
     }
 
-    public void toggleMute() {
-        this.isMuted = !this.isMuted;
-    }
-    public boolean isMuted() {
-        return this.isMuted;
-    }
 
 
 }

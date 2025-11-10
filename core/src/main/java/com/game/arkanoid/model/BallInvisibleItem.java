@@ -12,11 +12,13 @@ public class BallInvisibleItem extends Item {
 
     @Override
     public void applyEffect(Paddle paddle, Ball ball) {
-        ball.setColor(1f,1f,1f,0.025f);
+        System.out.println("Ball is invisible!");
+        ball.setColor(1f, 1f, 1f, 0.025f);
     }
 
     @Override
     public void removeEffect(Paddle paddle, Ball ball) {
+        System.out.println("Ball return to normal!");
         ball.setColor(Color.WHITE);
     }
 }

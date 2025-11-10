@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.game.arkanoid.engine.GameManager;
 import com.game.arkanoid.model.*;
 import com.game.arkanoid.world.GameWorld;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,34 +15,23 @@ public class MasterRenderer {
     private Renderer renderer;
     private TextureManager textureManager;
     private SoundManager soundManager;
-    // TODO: Thêm FontManager để vẽ chữ
     private FontManager font;
-    // Để render điểm cao nhất
     private TextObject highScore;
-    // Để render điểm hiện tại
     private TextObject currentScore;
-    //Để render số mạng còn lại
     private TextObject currentHeart;
-    //Để render level hiện tại
     private TextObject currentLevel;
-
     private TextObject creditName1;
     private TextObject creditName2;
     private TextObject creditName3;
     private TextObject creditName4;
     private TextObject creditMainString;
 
-    //Music--> Chuyển thành private khi tổ chức lại dữ liệu
-    public static long hMusic;
-
-    public static boolean musicFlag;
 
     public int timeChangeColor;
 
 
     public MasterRenderer() {
         timeChangeColor = 0;
-        MasterRenderer.musicFlag = false;
         GameObject.setScreenWidth(800);
         GameObject.setScreenHeight(800);
         textureManager = TextureManager.getInstance();
@@ -57,10 +47,10 @@ public class MasterRenderer {
         currentHeart = new TextObject("", 50f, 728f);
         currentLevel = new TextObject("", 0f, 24f);
         creditMainString = new TextObject("Group Member", 330f, 600f);
-        creditName1 = new TextObject("Hoang Minh Duc               StudentID: 24021412", 200f,500f);
-        creditName2 = new TextObject("Tran Nhat Hung               StudentID: 24020153", 200f,450f);
-        creditName3 = new TextObject("Nguyen Cong Huy Hoang     StudentID: 24021486", 200f,400f);
-        creditName4 = new TextObject("Le Tuan Anh                  StudentID: 24021366", 200f,350f);
+        creditName1 = new TextObject("Hoang Minh Duc               StudentID: 24021412", 200f, 500f);
+        creditName2 = new TextObject("Tran Nhat Hung               StudentID: 24020153", 200f, 450f);
+        creditName3 = new TextObject("Nguyen Cong Huy Hoang     StudentID: 24021486", 200f, 400f);
+        creditName4 = new TextObject("Le Tuan Anh                  StudentID: 24021366", 200f, 350f);
 
 
         GameManager.getGameManager().readData();
@@ -70,7 +60,6 @@ public class MasterRenderer {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
-
 
 
     public void renderMainMenu(Texture background, Stage stage) {
@@ -92,13 +81,11 @@ public class MasterRenderer {
         renderer.endRender();
     }
 
-    public void renderGameOver(Stage stage) {
+    public void renderGameOver(Texture background, Stage stage) {
 
-
+        drawBackground(background);
         drawStage(stage);
     }
-
-
 
 
     public void renderGameWorld(GameWorld world) {
@@ -114,8 +101,6 @@ public class MasterRenderer {
     }
 
 
-
-
     public void renderHUD(GameManager gameManager) {
         setScoreString(gameManager);
         setHeartString(gameManager);
@@ -128,10 +113,10 @@ public class MasterRenderer {
         renderer.endRender();
     }
 
-    public void renderPauseText() {
-        renderer.beginRender();
-        // TODO: Dùng font để vẽ chữ "PAUSED"
-        renderer.endRender();
+    public void renderPauseText(Texture background, Stage stage) {
+        drawBackground(background);
+
+        drawStage(stage);
     }
 
     public void renderHighScore(GameManager gameManager) {
@@ -150,7 +135,6 @@ public class MasterRenderer {
         textureManager.dispose();
         soundManager.dispose();
         MusicManager.getInstance().dispose();
-        // font.dispose();
     }
 
 
@@ -160,12 +144,13 @@ public class MasterRenderer {
         currentScore.setContent(scoreString);
     }
 
-    private void setHeartString(GameManager gameManager){
+    private void setHeartString(GameManager gameManager) {
         int heart = gameManager.getLives();
         String heartString = String.format("Heart: %d", heart);
         currentHeart.setContent(heartString);
     }
-    private void setLevelString(GameManager gameManager){
+
+    private void setLevelString(GameManager gameManager) {
         int level = gameManager.getCurrentLevel();
         String levelString = String.format("Level %d", level);
         currentLevel.setContent(levelString);
@@ -180,7 +165,7 @@ public class MasterRenderer {
     }
 
     private void playGameWorldMusic() {
-        if(MusicManager.getInstance().getmFlag() != true) {
+        if (MusicManager.getInstance().getmFlag() != true) {
             MusicManager.getInstance().BASS_setPattern(0x6 | (0 << 8));
             MusicManager.getInstance().BASS_playMusic();
             MusicManager.getInstance().setmFlag(true);
@@ -196,15 +181,15 @@ public class MasterRenderer {
 
     private void renderItem(GameWorld world) {
         List<Item> powers = world.getPowers();
-        for(Item power : powers) {
-            if(!power.getStatus()) continue;
-            if(!power.isPickedUp()) {
+        for (Item power : powers) {
+            if (!power.getStatus()) continue;
+            if (!power.isPickedUp()) {
                 renderer.render(power, textureManager.getTexture(power.getTexture()));
             }
         }
     }
 
-    private void renderAnimation(){
+    private void renderAnimation() {
         List<AnimationRender> anims = AnimationRender.getListAnimationRender();
         Iterator<AnimationRender> it = anims.iterator();
         while (it.hasNext()) {
@@ -219,10 +204,9 @@ public class MasterRenderer {
 
     private void renderBall(GameWorld world) {
         Ball ball = world.getBalls();
-        if(ball.getFlag() == 0) {
+        if (ball.getFlag() == 0) {
             renderer.renderCircleIncludeColor(ball, textureManager.getTexture("BALL_1"));
-        }
-        else{
+        } else {
             renderer.renderCircleIncludeColor(ball, textureManager.getTexture("BALL_2"));
         }
 
@@ -238,7 +222,7 @@ public class MasterRenderer {
     }
 
     private void playMainMenuMusic() {
-        if(MusicManager.getInstance().getmFlag() != true) {
+        if (MusicManager.getInstance().getmFlag() != true) {
             MusicManager.getInstance().BASS_setPattern(0xC | (0 << 8));
             MusicManager.getInstance().BASS_playMusic();
             MusicManager.getInstance().setmFlag(true);
@@ -255,7 +239,6 @@ public class MasterRenderer {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
-
 
 
 }

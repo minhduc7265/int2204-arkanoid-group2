@@ -3,6 +3,7 @@ package com.game.arkanoid.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 import com.game.arkanoid.Main;
 import com.game.arkanoid.engine.GameManager;
 import com.game.arkanoid.output.MusicManager;
@@ -14,13 +15,20 @@ public class GameScreen implements Screen {
     private GameManager gameManager;
     private ButtonManager buttonManager;
     private boolean isShowGameOver;
+    private boolean isShowPause;
+    private Texture pauseBackgroundTexture;
+    private Texture gameOverBackgroundTexture;
 
     public GameScreen(Main game) {
         this.game = game;
         this.world = new GameWorld();
         this.gameManager = GameManager.getGameManager();
         this.isShowGameOver = false;
-        buttonManager = new ButtonManager(game);
+        this.isShowPause = false;
+        buttonManager = ButtonManager.getInstance(game);
+        this.pauseBackgroundTexture = new Texture(Gdx.files.internal("backgrounds/pause_background.png"));
+        this.gameOverBackgroundTexture = new Texture(Gdx.files.internal("backgrounds/gameover_background.png"));
+        MusicManager.getInstance().setmFlag(false);
     }
 
 
@@ -36,9 +44,11 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             if (gameManager.isPaused()) {
                 gameManager.setGameState(GameManager.GameState.RUNNING);
+                buttonManager.deleteButton();
                 MusicManager.getInstance().BASS_playMusic();
             } else {
                 gameManager.setGameState(GameManager.GameState.PAUSED);
+                buttonManager.deleteButton();
                 MusicManager.getInstance().BASS_pauseMusic();
             }
         }
@@ -57,12 +67,17 @@ public class GameScreen implements Screen {
         game.getMasterRenderer().renderGameWorld(world);
         game.getMasterRenderer().renderHUD(gameManager);
 
-        if (gameManager.isPaused()) {
-            game.getMasterRenderer().renderPauseText();
-        }
         if (gameManager.getGameState() == GameManager.GameState.GAMEOVER) {
-            showButton();
-            game.getMasterRenderer().renderGameOver(buttonManager.getStage());
+            showButtonGameOver();
+            game.getMasterRenderer().renderGameOver(gameOverBackgroundTexture,buttonManager.getStage());
+        }
+        else if(gameManager.getGameState() == GameManager.GameState.PAUSED){
+            showButtonPause();
+            game.getMasterRenderer().renderPauseText(pauseBackgroundTexture, buttonManager.getStage());
+
+        }
+        else if(gameManager.getGameState() == GameManager.GameState.RUNNING){
+            isShowPause = false;
         }
     }
 
@@ -72,10 +87,18 @@ public class GameScreen implements Screen {
 
     }
 
-    public void showButton() {
+    public void showButtonGameOver() {
         if (isShowGameOver != true) {
             buttonManager.showGameOver();
             isShowGameOver = true;
+        }
+
+    }
+
+    public void showButtonPause() {
+        if(isShowPause !=  true) {
+            buttonManager.showPauseMenu();
+            isShowPause = true;
         }
 
     }
@@ -99,6 +122,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        buttonManager.dispose();
+        pauseBackgroundTexture.dispose();
+        gameOverBackgroundTexture.dispose();
+        world.shutdown();
     }
 }

@@ -13,8 +13,11 @@ public class MusicManager {
 
     private Bass bassInstance;
 
+    private boolean isMuted;
+
     private MusicManager() {
         this.mFlag = false;
+        this.isMuted = false;
         this.bassInstance = Native.load(Gdx.files.internal("dll/bass.dll").path(), Bass.class);
     }
 
@@ -43,7 +46,7 @@ public class MusicManager {
         return this.bassInstance.BASS_ChannelSetPosition(hMusic, pattern, Bass.BASS_POS_MUSIC_ORDER);
     }
 
-    public boolean BASS_playMusic(){
+    public boolean BASS_playMusic() {
         return this.bassInstance.BASS_ChannelPlay(hMusic, false);
     }
 
@@ -56,7 +59,9 @@ public class MusicManager {
         return this.bassInstance.BASS_ChannelStop(hMusic);
     }
 
-
+    public boolean BASS_setVolume(float volume) {
+        return this.bassInstance.BASS_ChannelSetAttribute(hMusic, Bass.BASS_ATTRIB_VOL, volume);
+    }
 
 
     public void initBass() {
@@ -81,5 +86,13 @@ public class MusicManager {
 
     public void setmFlag(boolean mFlag) {
         this.mFlag = mFlag;
+    }
+
+    public boolean getIsMuted() {
+        return this.isMuted;
+    }
+
+    public void setMuted(boolean muted) {
+        this.isMuted = muted;
     }
 }

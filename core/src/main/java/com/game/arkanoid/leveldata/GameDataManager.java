@@ -2,7 +2,7 @@ package com.game.arkanoid.leveldata;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Json; 
+import com.badlogic.gdx.utils.Json;
 
 /**
 * This class handles reading and writing the PlayerData.json file.
@@ -31,24 +31,24 @@ public class GameDataManager {
             // File exists -> Read file
             try {
                 playerData = json.fromJson(PlayerData.class, file);
-                System.out.println("Đã tải dữ liệu người chơi!");
+                System.out.println("Loaded Data!");
             } catch (Exception e) {
                 // File is corrupted
-                System.out.println("File lưu bị lỗi! Tạo dữ liệu mặc định.");
+                System.out.println("Save file corrupted! Create default data.");
                 playerData = new PlayerData(); // Create new
                 saveData(); // Save new file
             }
         } else {
             // File does not exist (first time playing game)
-            System.out.println("Không tìm thấy file lưu. Tạo dữ liệu mặc định.");
+            System.out.println("Save file not found. Creating default data.");
             playerData = new PlayerData(); // Create new
             saveData(); // Save new file
         }
 
         // Print information to console
-        System.out.println("--- THÔNG TIN NGƯỜI CHƠI HIỆN TẠI ---");
-        System.out.println("   Điểm cao nhất: " + playerData.highScore);
-        System.out.println("   Level cao nhất: " + playerData.maxLevel);
+        System.out.println("--- CURRENT PLAYER INFORMATION ---");
+        System.out.println("   Highest score: " + playerData.highScore);
+        System.out.println("   Highest Level: " + playerData.maxLevel);
         System.out.println("-------------------------------------");
     }
 
@@ -58,8 +58,8 @@ public class GameDataManager {
     public void saveData() {
         FileHandle file = Gdx.files.local(SAVE_FILE);
         //Overwrite that JSON string into the player.json file
-        file.writeString(json.prettyPrint(playerData), false); 
-        System.out.println("Đã lưu dữ liệu người chơi!");
+        file.writeString(json.prettyPrint(playerData), false);
+        System.out.println("Saved data!");
     }
 
     // Function to get data

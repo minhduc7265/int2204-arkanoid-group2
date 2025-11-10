@@ -19,11 +19,13 @@ public class ExpandPaddleItem extends Item {
 
     @Override
     public void applyEffect(Paddle paddle, Ball ball) {
+        System.out.println("Paddle is expanded!");
         paddle.setWidth(paddle.getWidth() + EXPAND_AMOUNT);
     }
 
     @Override
     public void removeEffect(Paddle paddle, Ball ball) {
+        System.out.println("Paddle return to normal!");
         paddle.resetWidth();
     }
 }

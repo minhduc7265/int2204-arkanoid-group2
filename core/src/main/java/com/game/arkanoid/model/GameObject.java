@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
  * Stores position, size, state, and texture information.
  */
 
-public class GameObject {
+public abstract class GameObject {
     private Rectangle bounds; // rectangle stores the coordinates and dimensions of the object
     private boolean status;
     public static int screenWidth; // Common screen width for all objects inherited from GameObject

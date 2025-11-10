@@ -14,7 +14,6 @@ public class BallBreakItem extends Item {
         System.out.println("Ball is break");
         ball.setStatus(false);
         AnimationFactory.call(AnimationFactory.TypeAnimation.BREAK_ANIM, (int)ball.getXPos(), (int)ball.getYPos());
-        //GameManager.getGameManager().setLives(GameManager.getGameManager().getLives() - 1);
     }
 
 

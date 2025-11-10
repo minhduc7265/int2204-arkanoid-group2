@@ -12,9 +12,7 @@ public class CreditScreen implements Screen {
 
     public CreditScreen(Main game) {
         this.game = game;
-        buttonManager = new ButtonManager(game);
-
-        // Load các tài nguyên cần thiết
+        buttonManager = ButtonManager.getInstance(game);
         this.backgroundTexture = new Texture(Gdx.files.internal("backgrounds/background.png"));
     }
 
@@ -25,22 +23,30 @@ public class CreditScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        // Giao việc vẽ cho MasterRenderer
         game.getMasterRenderer().clearScreen();
         game.getMasterRenderer().renderCredit(backgroundTexture, buttonManager.getStage());
     }
 
     @Override
     public void dispose() {
-        buttonManager.dispose();
         backgroundTexture.dispose();
     }
 
-    // Các hàm khác không đổi
-    @Override public void resize(int width, int height) { buttonManager.getStage().getViewport().update(width, height, true); }
-    @Override public void pause() {}
-    @Override public void resume() {}
-    @Override public void hide() {
+    @Override
+    public void resize(int width, int height) {
+        buttonManager.getStage().getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void hide() {
         Gdx.input.setInputProcessor(null);
     }
 

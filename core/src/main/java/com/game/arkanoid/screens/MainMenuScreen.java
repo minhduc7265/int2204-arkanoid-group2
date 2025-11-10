@@ -9,53 +9,23 @@ import com.game.arkanoid.engine.GameManager;
 public class MainMenuScreen implements Screen {
     private final Main game;
     private Texture backgroundTexture;
-    private GameManager gameManager;//Lấy dữ liệu điểm để in ra ngoài màn hình
+    private GameManager gameManager;
     private ButtonManager buttonManager;
 
     public MainMenuScreen(Main game) {
         this.game = game;
-        buttonManager = new ButtonManager(game);
+        buttonManager = ButtonManager.getInstance(game);
         this.gameManager = GameManager.getGameManager();
-
-        // Load các tài nguyên cần thiết
         this.backgroundTexture = new Texture(Gdx.files.internal("backgrounds/menu_background.png"));
     }
 
     @Override
     public void show() {
         buttonManager.showMenu();
-
-
-
-        /*Gdx.input.setInputProcessor(stage);
-
-        Table table = new Table();
-        table.setFillParent(true);
-        stage.addActor(table);
-
-        // Tạo ImageButton bằng cách chỉ định style "default" từ file skin của bạn
-        ImageButton playButton = new ImageButton(skin, "default");
-
-        // Gắn sự kiện "click" cho nút Play
-        playButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new GameScreen(game));
-                MusicManager.getInstance().setmFlag(false);
-            }
-        });
-
-        // Thêm nút Play vào giữa màn hình
-        table.bottom().right();
-        table.add(playButton).size(250, 75).pad(10);
-
-        // LƯU Ý: Để tạo các nút khác (How to Play, Exit...), bạn cần phải
-        // định nghĩa thêm các style cho chúng trong file gameskin.json trước.*/
     }
 
     @Override
     public void render(float delta) {
-        // Giao việc vẽ cho MasterRenderer
         game.getMasterRenderer().clearScreen();
         game.getMasterRenderer().renderMainMenu(backgroundTexture, buttonManager.getStage());
         game.getMasterRenderer().renderHighScore(gameManager);
@@ -63,15 +33,24 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        buttonManager.dispose();
         backgroundTexture.dispose();
     }
 
-    // Các hàm khác không đổi
-    @Override public void resize(int width, int height) { buttonManager.getStage().getViewport().update(width, height, true); }
-    @Override public void pause() {}
-    @Override public void resume() {}
-    @Override public void hide() {
+    @Override
+    public void resize(int width, int height) {
+        buttonManager.getStage().getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void hide() {
         Gdx.input.setInputProcessor(null);
     }
 }

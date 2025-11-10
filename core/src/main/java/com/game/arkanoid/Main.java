@@ -27,11 +27,16 @@ public class Main extends Game {
     @Override
     public void dispose() {
         // Dọn dẹp renderer khi game tắt
+        ButtonManager.getInstance(this).dispose();
         masterRenderer.dispose();
         super.dispose();
+        if (getScreen() != null) {
+            getScreen().dispose();
+        }
+
     }
 
-    public static void main (String[] arg) {
+    public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("Arkanoid Game");
         config.setWindowedMode(SCREEN_WIDTH, SCREEN_HEIGHT);

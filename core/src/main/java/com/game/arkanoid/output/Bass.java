@@ -11,6 +11,7 @@ public interface Bass extends Library {
     int BASS_DEVICE_INIT	   = 0x4;
     int BASS_DEVICE_LOOPBACK   = 0x8;
     int BASS_DEVICE_DEFAULTCOM = 0x80;
+    int BASS_ATTRIB_VOL        = 0x2;
 
     boolean BASS_Init(int device, int freq, int flags, long win, long cl);
 
@@ -29,6 +30,8 @@ public interface Bass extends Library {
     boolean BASS_ChannelStop(long handle);
 
     boolean BASS_SetVolume(float volume);
+
+    boolean BASS_ChannelSetAttribute(long handle, int attrib, float volume);
 
 
 }

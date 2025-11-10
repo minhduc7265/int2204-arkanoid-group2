@@ -6,21 +6,31 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Collision {
     //Lưu ý: Mã nguồn tham khảo từ cuốn Real Time Collision Detection của Christer Ericson
+    //Và comment sẽ dùng VI thay vì EN
     public static final float EPSILON = 1e-6f;
-    public static final Vector2 RIGHT = new Vector2(1f,0f);
+    public static final Vector2 RIGHT = new Vector2(1f, 0f);
     public static final Vector2 LEFT = new Vector2(-1f, 0f);
-    public static final Vector2 UP = new Vector2(0f,1f);
+    public static final Vector2 UP = new Vector2(0f, 1f);
     public static final Vector2 DOWN = new Vector2(0f, -1f);
 
-    public static Point Corner(AABB b, int n) {
+    private static Point Corner(AABB b, int n) {
         Point p = new Point();
         p.x = ((n & 1) != 0 ? b.max.x : b.min.x);
         p.y = ((n & 2) != 0 ? b.max.y : b.min.y);
         return p;
     }
 
-
-    public static int IntersectRayAABB(Point p, Vector2 d, AABB a, CollisionResult collisionResult, Point q) {
+    /**
+     * Va chạm giữa một điểm và hình minkowski.
+     *
+     * @param p
+     * @param d
+     * @param a
+     * @param collisionResult
+     * @param q
+     * @return
+     */
+    private static int IntersectRayAABB(Point p, Vector2 d, AABB a, CollisionResult collisionResult, Point q) {
         float tMIN = 0.0f;
         float tMAX = Float.MAX_VALUE;
 
@@ -61,7 +71,7 @@ public class Collision {
             tMIN = Math.max(tMIN, t1);
             tMAX = Math.min(tMAX, t2);
 
-            //Nếu tMIN > tMAX -> vô lí nên dẹp
+            //Nếu tMIN > tMAX -> vô lí nên loại
             if (tMIN > tMAX) return 0;
         }
 
@@ -75,7 +85,15 @@ public class Collision {
 
     }
 
-
+    /**
+     * Hàm check của va chạm.
+     *
+     * @param c
+     * @param d
+     * @param rec
+     * @param collisionResult
+     * @return
+     */
     public static int IntersectMovingSphereAABB(Circle c, Vector2 d, Rectangle rec, CollisionResult collisionResult) {
         //c là cái quả bóng
         //rec là viên gạch
@@ -147,6 +165,15 @@ public class Collision {
 
     }
 
+    /**
+     * Va chạm giữa một đường thẳng _____ và hình tròn.
+     *
+     * @param seg
+     * @param p
+     * @param r
+     * @param collisionResult
+     * @return
+     */
     private static int IntersectSegmentCircle(Segment seg, Point p, float r, CollisionResult collisionResult) {
         Vector2 d = new Vector2(seg.p1.x - seg.p0.x, seg.p1.y - seg.p0.y);
         Vector2 m = new Vector2(seg.p0.x - p.x, seg.p0.y - p.y);
@@ -158,6 +185,10 @@ public class Collision {
 
         if (c < 0.0f) {
             collisionResult.timeCollision = 0.0f;
+            collisionResult.typeCollision = CollisionResult.TypeCollision.VERTEX;
+            Vector2 normal = new Vector2(p.x - seg.p0.x, p.y - seg.p0.y).nor();
+            collisionResult.normal.set(normal);
+
             return 1;
         }
         float delta = b * b - 4f * a * c;

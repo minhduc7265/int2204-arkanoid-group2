@@ -1,0 +1,18 @@
+gameover_skin.png
+size: 975, 1302
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+mainmenu_button_down
+  bounds: 0, 0, 630, 183
+mainmenu_button_up
+  bounds: 0, 183, 630, 183
+restart_button_down
+  bounds: 0, 366, 630, 183
+restart_button_up
+  bounds: 0, 549, 630, 183
+volume_button_down
+  bounds: 0, 732, 975, 285
+volume_button_up
+  bounds: 0, 1017, 975, 285
