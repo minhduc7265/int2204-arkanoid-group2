@@ -16,7 +16,7 @@ public class Main extends Game {
     @Override
     public void create() {
         masterRenderer = new MasterRenderer();
-        // Bắt đầu game với màn hình Menuo
+        // Bắt đầu game với màn hình Menu
         setScreen(new MainMenuScreen(this));
     }
 

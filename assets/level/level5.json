@@ -1,5 +1,5 @@
 {
-  "level": 5,
+  "level": "5",
   "brick": [
     // Hàng dọc bên trái (ox = 80)
     { "ox": 80, "oy": 664, "power": 6 },

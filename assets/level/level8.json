@@ -1,0 +1,90 @@
+{
+  "level": "8",
+  "brick": [
+    // Vòng 1 (Vòng ngoài)
+    // Hàng trên
+    { "ox": 40,  "oy": 664, "power": 5 },
+    { "ox": 120, "oy": 664, "power": 5 },
+    { "ox": 200, "oy": 664, "power": 5 },
+    { "ox": 280, "oy": 664, "power": 5 },
+    { "ox": 360, "oy": 664, "power": 5, "item": 2 },
+    { "ox": 440, "oy": 664, "power": 5 },
+    { "ox": 520, "oy": 664, "power": 5 },
+    { "ox": 600, "oy": 664, "power": 5 },
+    { "ox": 680, "oy": 664, "power": 5 },
+
+    // Hàng dưới
+    { "ox": 40,  "oy": 312, "power": 5 },
+    { "ox": 120, "oy": 312, "power": 5 },
+    { "ox": 200, "oy": 312, "power": 5 },
+    { "ox": 280, "oy": 312, "power": 5 },
+    { "ox": 360, "oy": 312, "power": 5, "item": 2 },
+    { "ox": 440, "oy": 312, "power": 5 },
+    { "ox": 520, "oy": 312, "power": 5 },
+    { "ox": 600, "oy": 312, "power": 5, "item": 1 },
+    { "ox": 680, "oy": 312, "power": 5 },
+
+    // Cột trái
+    { "ox": 40, "oy": 632, "power": 5 },
+    { "ox": 40, "oy": 600, "power": 5 },
+    { "ox": 40, "oy": 568, "power": 5 },
+    { "ox": 40, "oy": 536, "power": 5 },
+    { "ox": 40, "oy": 504, "power": 5, "item": 2 },
+    { "ox": 40, "oy": 472, "power": 5 },
+    { "ox": 40, "oy": 440, "power": 5 },
+    { "ox": 40, "oy": 408, "power": 5, "item": 5 },
+    { "ox": 40, "oy": 376, "power": 5 },
+    { "ox": 40, "oy": 344, "power": 5 },
+
+    // Cột phải
+    { "ox": 680, "oy": 632, "power": 5 },
+    { "ox": 680, "oy": 600, "power": 5 },
+    { "ox": 680, "oy": 568, "power": 5 },
+    { "ox": 680, "oy": 536, "power": 5 },
+    { "ox": 680, "oy": 504, "power": 5 },
+    { "ox": 680, "oy": 472, "power": 5, "item": 5 },
+    { "ox": 680, "oy": 440, "power": 5 },
+    { "ox": 680, "oy": 408, "power": 5 },
+    { "ox": 680, "oy": 376, "power": 5 },
+    { "ox": 680, "oy": 344, "power": 5 },
+
+    // Vòng 2 (Vòng trong)
+    // Hàng trên
+    { "ox": 200, "oy": 600, "power": 5 },
+    { "ox": 280, "oy": 600, "power": 5 },
+    { "ox": 360, "oy": 600, "power": 5, "item": 2 },
+    { "ox": 440, "oy": 600, "power": 5 },
+    { "ox": 520, "oy": 600, "power": 5 },
+
+    // Hàng dưới
+    { "ox": 200, "oy": 376, "power": 5 },
+    { "ox": 280, "oy": 376, "power": 5 },
+    { "ox": 360, "oy": 376, "power": 5, "item": 2 },
+    { "ox": 440, "oy": 376, "power": 5, "item": 6 },
+    { "ox": 520, "oy": 376, "power": 5 },
+
+    // Cột trái
+
+    { "ox": 200, "oy": 568, "power": 5 },
+    { "ox": 200, "oy": 536, "power": 5 },
+    { "ox": 200, "oy": 504, "power": 5 },
+    { "ox": 200, "oy": 472, "power": 5, "item": 4 },
+    { "ox": 200, "oy": 440, "power": 5 },
+    { "ox": 200, "oy": 408, "power": 5 },
+
+    // Cột phải
+
+    { "ox": 520, "oy": 568, "power": 5 },
+    { "ox": 520, "oy": 536, "power": 5 },
+    { "ox": 520, "oy": 504, "power": 5 },
+    { "ox": 520, "oy": 472, "power": 5, "item": 6 },
+    { "ox": 520, "oy": 440, "power": 5 },
+    { "ox": 520, "oy": 408, "power": 5 }
+
+    //nhân
+    { "ox": 360, "oy": 536, "power": 5 },
+    { "ox": 360, "oy": 504, "power": 6 },
+    { "ox": 360, "oy": 472, "power": 6 },
+    { "ox": 360, "oy": 440, "power": 5 }
+  ]
+}

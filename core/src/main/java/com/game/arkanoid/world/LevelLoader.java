@@ -14,8 +14,9 @@ import java.util.List;
 
 
 public class LevelLoader {
-    
+    private static int maxLevel = 8;
     public List<Brick> loadLevel(int level) {
+        level = ((level - 1) % maxLevel) + 1;
         String filePath = "level/" + "level" + Integer.toString(level) + ".json";
         List<Brick> newBricks = new ArrayList<>();
         try {
