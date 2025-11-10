@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Manages the entire lifecycle of PowerUp objects in the game.
@@ -17,6 +19,7 @@ import java.util.Optional;
 public class ItemManager {
     // List contains only active Power-Ups
     private List<Item> activeItems;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public ItemManager() {
         this.activeItems = new ArrayList<>();
@@ -63,7 +66,27 @@ public class ItemManager {
     /**
      * Update all Power-Ups (called in game loop).
      */
-    public void updateAll(Paddle paddle, Ball ball) {
+    public void updateAllAsync() {
+        executor.submit(() -> {
+            for (Item item : activeItems) {
+                item.update();
+            }
+        });
+    }
+
+    public void removeExpiredItems(Paddle paddle, Ball ball) {
+        Iterator<Item> iterator = activeItems.iterator();
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+            if (!item.getStatus()) {
+                if (item.isPickedUp()) {
+                    item.removeEffect(paddle, ball); // main thread
+                }
+                iterator.remove();
+            }
+        }
+    }
+    /*public void updateAll(Paddle paddle, Ball ball) {
         if(!ball.getStatus()) return;
         Iterator<Item> iterator = activeItems.iterator();
         while (iterator.hasNext()) {
@@ -77,7 +100,7 @@ public class ItemManager {
                 iterator.remove();
             }
         }
-    }
+    }*/
 
     /**
      * Helper function: Find an activated Power-Up by type.
@@ -139,6 +162,10 @@ public class ItemManager {
         return this.activeItems;
     }
 
+    public void shutdown() {
+        executor.shutdown();
+    }
+
     public static void soundEffect(Item.ItemType type) {
         switch (type) {
             case ADD_LIFE, FAST_BALL, EXPAND_PADDLE -> {
@@ -148,7 +175,7 @@ public class ItemManager {
                 SoundManager.getInstance().playSound("BALL_BREAK");
             }
             default -> {
-                System.err.println("Không tồn tại vật phẩm");
+                System.err.println("Item invalid");
             }
         }
     }

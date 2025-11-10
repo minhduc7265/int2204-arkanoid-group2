@@ -23,15 +23,15 @@ public class GameWorld {
     private ItemManager itemManager;
     private final Map<Integer, Integer> Score;
     private boolean isPushBall;
+    private static final int PADDLE_WID = 122;
+    private static final int PADDLE_HEI = 44;
 
 
     private CollisionManager collisionManager;
 
     public GameWorld() {
-
         this.levelLoader = new LevelLoader();
         this.gameManager = GameManager.getGameManager();
-
         this.gameManager.startNewGame();
         this.itemManager = new ItemManager();
         this.Score = new HashMap<>();
@@ -44,7 +44,7 @@ public class GameWorld {
         Score.put(5, 120);
         Score.put(6, 0);
 
-        paddle = new Paddle(0, 0, 122, 44);
+        paddle = new Paddle(0, 0, PADDLE_WID, PADDLE_HEI);
         paddle.setyFinal(100f);
         ball = null;
         bricks = new ArrayList<>();
@@ -55,12 +55,15 @@ public class GameWorld {
 
     public void resetBallPosition() {
         isPushBall = false;
-        ball = new Ball(-100f, -100f, 20, 19, 500f);
+        ball = new Ball(-100f, -100f, 20, 19, 400f);
     }
 
     public void initializeLevel(int level) {
         bricks = levelLoader.loadLevel(level);
         resetBallPosition();
+        if (itemManager != null) {
+            itemManager.shutdown();
+        }
         itemManager = new ItemManager();
         collisionManager.setItemManager(itemManager);
         gameManager.writeData();
@@ -71,12 +74,10 @@ public class GameWorld {
     public void update(float delta) {
         handleInput();
         updateEntities(delta);
-        //if (!ball.getStatus()) ball = null;
         handleLevelProgression();
-        //handleGameOver();
     }
 
-    // Getter để MasterRenderer có thể lấy đối tượng để vẽ
+
     public Paddle getPaddle() {
         return paddle;
     }
@@ -106,7 +107,10 @@ public class GameWorld {
     private void updateEntities(float delta) {
         handleBall(delta);
         itemManager.checkCollisionsAndApplyEffects(paddle, ball);
-        itemManager.updateAll(paddle, ball);
+        //MultiThread
+        itemManager.updateAllAsync();
+        itemManager.removeExpiredItems(paddle, ball);
+        //itemManager.updateAll(paddle, ball);
         checkBricks();
         checkBall();
     }
@@ -174,6 +178,13 @@ public class GameWorld {
             gameManager.startNewGame();
             initializeLevel(gameManager.getCurrentLevel());
         }
+    }
+
+    public void shutdown() {
+        if (itemManager != null) {
+            itemManager.shutdown();
+        }
+
     }
 
 

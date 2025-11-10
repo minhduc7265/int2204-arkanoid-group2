@@ -7,9 +7,10 @@ package com.game.arkanoid.model;
  * - Supports bounce (reversal direction) when colliding with edges or other objects.
  */
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
-public class MovableObject extends GameObject {
+public abstract class MovableObject extends GameObject {
     private float vx;   //Velocity of x
     private float vy;   //Velocity of y
 
@@ -71,10 +72,9 @@ public class MovableObject extends GameObject {
     }
 
     /**
-     * Đặt tốc độ theo hướng hiện tại. Nếu hướng chưa có (vx=vy=0),
-     * mặc định hướng lên trên.
+     * Set speed in current direction. If direction is not given (vx=vy=0),
+     * defaults to up.
      */
-
     public void setSpeed(float speed) {
         float len = getSpeed();
         if (len < 1e-6f) {
@@ -159,7 +159,7 @@ public class MovableObject extends GameObject {
 
     @Override
     public void update() {
-        update(1 / 60f);
+        update(Gdx.graphics.getDeltaTime());
     }
 
     /*change direction along the x */

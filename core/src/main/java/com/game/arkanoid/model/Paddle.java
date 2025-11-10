@@ -35,8 +35,6 @@ public class Paddle extends MovableObject {
         this.yFinal = yFinal;
     }
 
-    //Bên dưới điều khiển paddle bằng nút bấm
-    //Còn đây là dùng tọa độ chuột
     public void updateUseMouse(float mouseOx) {
         setPosition(mouseOx - getWidth() / 2f, yFinal);
         if (getXPos() < 0) {
@@ -53,7 +51,6 @@ public class Paddle extends MovableObject {
         // Update velocity from acceleration
         setVelocity(getVelocityX() + getAccelerationX() * dt, 0);
 
-        // Speed ​​limit in [-targetSpeed, targetSpeed]
         float vx = Math.max(-getMaxSpeed(), Math.min(getVelocityX(), getMaxSpeed()));
         setVelocity(vx, 0);
 

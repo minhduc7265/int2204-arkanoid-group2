@@ -5,6 +5,9 @@ public class Brick extends GameObject {
     private int item;
     private int blood;
 
+    public static final int BRICK_WID = 80;
+    public static final int BRICK_HEI = 32;
+
 
     public Brick(float x, float y, int w, int h, int flag, int item, int blood) {
         super(x, y, w, h);
@@ -41,9 +44,16 @@ public class Brick extends GameObject {
 
     public String getTexture() {
         switch (flag) {
-            case 1,2,3,4,6 -> {return String.format("BRICK_%d", flag);}
-            case 5 -> {return (this.blood == 2 ? "BRICK_5" : "BRICK_5_BREAK");}
-            default -> {System.err.println("Texture không hợp lệ"); return "DEFAULT_TEXTURE";}
+            case 1, 2, 3, 4, 6 -> {
+                return String.format("BRICK_%d", flag);
+            }
+            case 5 -> {
+                return (this.blood == 2 ? "BRICK_5" : "BRICK_5_BREAK");
+            }
+            default -> {
+                System.err.println("Invalid texture, use default!");
+                return "DEFAULT_TEXTURE";
+            }
         }
     }
 }

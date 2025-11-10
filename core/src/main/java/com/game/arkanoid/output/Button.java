@@ -8,16 +8,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class Button {
-    //private Stage stage;//Lưu ý truyền tham số không tạo đối tượng mới
     private Skin skin;
     private TextureAtlas atlas;
     private ImageButton button;
 
-    public Button(/**Stage stage,*/ String atlasPath, String skinPath) {
-        //this.stage = stage;
+    public Button(String atlasPath, String skinPath, String style) {
         loadTextureAtlas(atlasPath);
         loadSkin(skinPath);
-        createButton();
+        createButton(style);
     }
 
     private void loadTextureAtlas(String path) {
@@ -28,18 +26,19 @@ public class Button {
         this.skin = new Skin(Gdx.files.internal(path), this.atlas);
     }
 
-    private void createButton() {
-        this.button = new ImageButton(this.skin, "default");
+    private void createButton(String style) {
+        this.button = new ImageButton(this.skin, style);
     }
 
     public void addClickListener(Runnable action) {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                action.run(); // Khi click thì chạy logic bạn truyền vào
+                action.run();
             }
         });
     }
+
 
     public ImageButton getButton() {
         return button;

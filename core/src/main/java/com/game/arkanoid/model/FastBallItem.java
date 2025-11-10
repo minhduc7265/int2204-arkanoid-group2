@@ -19,12 +19,14 @@ public class FastBallItem extends Item {
 
    @Override
     public void applyEffect(Paddle paddle, Ball ball) {
+        System.out.println("Ball acceleration!");
         float newSpeed = ball.getSpeed() * SPEED_MULTIPLIER;
         ball.setSpeed(newSpeed);
     }
 
     @Override
     public void removeEffect(Paddle paddle, Ball ball) {
+        System.out.println("Ball return to normal!");
         ball.resetSpeed();
     }
 }

@@ -10,12 +10,14 @@ import java.util.Map;
 public class TextureManager {
 
     private static TextureManager textureManager;
+    private static Texture defaultTexture;
 
     private final Map<String, Texture> listTextures;
 
     private TextureManager() {
         listTextures = new HashMap<>();
         loadListTexture();
+        defaultTexture = new Texture(Gdx.files.internal("textures/default_texture.png"));
     }
 
     /**
@@ -38,7 +40,8 @@ public class TextureManager {
             listTextures.put(name, newTexture);
         } catch (GdxRuntimeException e) {
             System.err.println(name + " Not found.");
-            return;
+            System.err.println("Use default texture");
+            listTextures.put(name, defaultTexture);
         }
 
     }
@@ -66,7 +69,8 @@ public class TextureManager {
         Texture texture = listTextures.get(name);
         if (texture == null) {
             System.err.println(name + " does not exist.");
-            Gdx.app.exit();
+            System.err.println("Use default texture");
+            return defaultTexture;
         }
         return texture;
     }
@@ -80,6 +84,7 @@ public class TextureManager {
             texture.dispose();
         }
         listTextures.clear();
+        defaultTexture.dispose();
     }
 
     public void loadListTexture() {

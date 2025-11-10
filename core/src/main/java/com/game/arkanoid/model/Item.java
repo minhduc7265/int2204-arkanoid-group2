@@ -93,6 +93,9 @@ public class Item extends GameObject {
     }
 
     public String getTexture() {
+        if(type == null) {
+            throw new IllegalArgumentException("Item invalid");
+        }
         return switch (type) {
             case FAST_BALL -> "BOOST_SPEED";
             case EXPAND_PADDLE -> "BOOST_PADDLE";
@@ -100,7 +103,6 @@ public class Item extends GameObject {
             case BALL_BREAK -> "BALL_BREAK";
             case FIRE_BALL -> "FIRE_BALL";
             case BALL_INVISIBLE -> "BALL_INVISIBLE";
-            default -> throw new RuntimeException("Item không tồn tại");
         };
     }
 

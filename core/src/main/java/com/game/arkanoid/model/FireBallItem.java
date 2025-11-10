@@ -10,10 +10,12 @@ public class FireBallItem extends Item {
 
     @Override
     public void applyEffect(Paddle paddle, Ball ball) {
+        System.out.println("Ball turned into a fireball!");
         ball.setFlag(1);
     }
 
     @Override
     public void removeEffect(Paddle paddle, Ball ball) {
+        System.out.println("Ball return to normal!");
     }
 }
