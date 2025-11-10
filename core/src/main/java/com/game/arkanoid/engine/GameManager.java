@@ -90,6 +90,8 @@ public class GameManager {
         this.lives--;
         if (this.lives <= 0) {
             this.gameState = GameState.GAMEOVER;
+            writeData();
+            readData();
         }
     }
 
