@@ -18,9 +18,9 @@ public class BrickFactoryTest {
     //Kiểm tra xem có tạo đúng loại gạch có flag == 1 không
     @Test
     public void testBrickI() {
-        brick = BrickFactory.call(1,0,0,0,0,0);
+        brick = BrickFactory.call(5,0,0,0,0,0);
         assertNotNull(brick);
-        assertEquals(1, brick.getFlag());
+        assertEquals(5, brick.getFlag());
 
     }
     //Nếu như flag nằm ngoài khoảng giá trị thì nó có trả ngoại lệ không?

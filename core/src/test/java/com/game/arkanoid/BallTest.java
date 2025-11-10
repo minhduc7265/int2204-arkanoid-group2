@@ -22,13 +22,13 @@ public class BallTest {
         GameObject.setScreenHeight(800);
         GameObject.setScreenWidth(800);
 
-        ball.setVelocity(5, -3);
+        ball.setVelocity(5, -4);
         ball.update(1f);
         float posX = ball.getXPos();
         float posY = ball.getYPos();
 
         assertEquals(105f, posX, 0.001f);
-        assertEquals(197f, posY, 0.001f);
+        assertEquals(196f, posY, 0.001f);
     }
     //Tương tự test trên nhưng kết quả sai
     @Test

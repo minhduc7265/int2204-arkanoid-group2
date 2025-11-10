@@ -18,8 +18,8 @@ public class GameManagerTest {
     @Test
     public void testScoreI() {
         assertEquals(0, gameManager.getScore());
-        gameManager.addScore(9876);
-        assertEquals(9876, gameManager.getScore());
+        gameManager.addScore(9877);
+        assertEquals(9877, gameManager.getScore());
     }
 
     //Tương tự nhưng sai
