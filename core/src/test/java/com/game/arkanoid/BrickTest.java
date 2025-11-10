@@ -16,8 +16,8 @@ public class BrickTest {
     //Xem có đúng texture không?
     @Test
     public void testI() {
-        brick = new Brick(0,0,0,0,1,2,2);
-        assertEquals("BRICK_1", brick.getTexture());
+        brick = new Brick(0,0,0,0,2,2,2);
+        assertEquals("BRICK_2", brick.getTexture());
     }
     //Xem có đúng texture không?
     @Test
